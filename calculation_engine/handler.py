@@ -23,21 +23,37 @@ class PaperCommons:
         return agroup_financial_operation_by_paper
 
 
-class StocksCalculate(PaperCommons):
+class StockCalculate(PaperCommons):
+    swing_classes = ("normal",)
+
+    def _filter_swing_trade_only(
+        self, agroup_financial_operation_by_paper: dict
+    ) -> dict:
+        agroup_financial_operation_by_paper_filtered = {}
+        for paper, operations in agroup_financial_operation_by_paper.items():
+            filtered_operations = filter(
+                lambda op: op.operation_class in self.swing_classes, operations
+            )
+            agroup_financial_operation_by_paper_filtered[paper] = filtered_operations
+
+        return agroup_financial_operation_by_paper_filtered
+
     def process(self, operations):
-        agroup_financial_operation_by_paper = super().agroup_financial_operation_by_paper(
+        financial_operation_by_paper = super().agroup_financial_operation_by_paper(
             operations
         )
-
-        # TODO verificar o calculo de preço médio
+        financial_operation_by_paper_swing_trade = self._filter_swing_trade_only(
+            financial_operation_by_paper
+        )
+         # TODO verificar o calculo de preco médio
 
 
 class RealStateFundsCalculate(PaperCommons):
     def process(self, operations):
-        agroup_financial_operation_by_paper = super().agroup_financial_operation_by_paper(
+        financial_operation_by_paper = super().agroup_financial_operation_by_paper(
             operations
         )
-
+        print(1)
         # TODO verificar o calculo de preco médio
 
 
@@ -45,7 +61,7 @@ class CalculationEngine:
     model_class = AnnualSummary
 
     mapper_paper_type_classes = {
-        "STOKES": StocksCalculate(),
+        "STOCK": StockCalculate(),
         "FIIs": RealStateFundsCalculate(),
     }
 
@@ -72,6 +88,9 @@ class CalculationEngine:
             self.annual_summary.financial_operations
         )
 
-        for paper_type, operations in agrouped_financial_operations_by_paper_types:
+        for (
+            paper_type,
+            operations,
+        ) in agrouped_financial_operations_by_paper_types.items():
             self.mapper_paper_type_classes[paper_type].process(operations)
 

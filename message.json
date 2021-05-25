@@ -1,0 +1,79 @@
+{
+    "customer_name": "Henry Roetger Silva",
+    "customer_cpf": "06716477926",
+    "reference_year": 2020,
+    "financial_operations": [
+        {
+            "date": "2020-10-26",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "paper": "CPTS11",
+            "paper_type": "FIIs",
+            "units": 4,
+            "unitary_value": 99.00,
+            "amount": 396.00,
+            "emoluments": 0.12,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-10-26",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "paper": "CPTS11",
+            "paper_type": "FIIs",
+            "units": 1,
+            "unitary_value": 99.00,
+            "amount": 99.00,
+            "emoluments": 0.03,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-10-27",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "paper": "ITSA4",
+            "paper_type": "AÇÕES",
+            "units": 16,
+            "unitary_value": 9.92,
+            "amount": null,
+            "emoluments": null,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-10-27",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "paper": "ITSA4",
+            "paper_type": "AÇÕES",
+            "units": 16,
+            "unitary_value": 9.92,
+            "amount": null,
+            "emoluments": null,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-11-06",
+            "operation_type": "sale",
+            "operation_class": "normal",
+            "paper": "XPLG11",
+            "paper_type": "FIIs",
+            "units": 1,
+            "unitary_value": 128.80,
+            "amount": 128.80,
+            "emoluments": 0.08,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-11-06",
+            "operation_type": "sale",
+            "operation_class": "normal",
+            "paper": "XPLG11",
+            "paper_type": "FIIs",
+            "units": 3,
+            "unitary_value": 128.80,
+            "amount": 386.43,
+            "emoluments": 0.08,
+            "currency_code": "BRL"
+        }
+    ]
+}

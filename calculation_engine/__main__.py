@@ -2,6 +2,7 @@
 # TODO verificar com o pessoal o significado do tipo do mercado e as conversoes de especificacao de titulo das notas
 # TODO trabalhar com um modelo de recalculo anual e um modelo incrementador na API
 # TODO validar o conceito de resumo anual
+# TODO para fundos imobiliarios sempre aplica o imposto?
 
 
 

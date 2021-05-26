@@ -3,6 +3,7 @@
 # TODO trabalhar com um modelo de recalculo anual e um modelo incrementador na API
 # TODO validar o conceito de resumo anual
 # TODO para fundos imobiliarios sempre aplica o imposto?
+# TODO verificar para qual período devo realizar a apuração (mensal/anual)?
 
 
 

@@ -13,6 +13,9 @@ class PaperCommons:
 
         return asset_portfolio
 
+    def calculate_average_price_by_paper(self, operations: list) -> dict:
+        pass
+
     def agroup_financial_operation_by_paper(self, operations: list) -> dict:
         asset_portfolio = self._get_asset_portfolio(operations)
 
@@ -21,6 +24,12 @@ class PaperCommons:
             agroup_financial_operation_by_paper[op.paper].append(op)
 
         return agroup_financial_operation_by_paper
+    
+    def resume_financial_operation_by_paper(self, operations: list) -> list: #TODO verificar se isso faz sentido rsrs
+        mapper_operation = {"purchase": sum}
+        for op in operations:
+            pass
+
 
 
 class StockCalculate(PaperCommons):
@@ -45,7 +54,7 @@ class StockCalculate(PaperCommons):
         financial_operation_by_paper_swing_trade = self._filter_swing_trade_only(
             financial_operation_by_paper
         )
-         # TODO verificar o calculo de preco médio
+        # TODO verificar o calculo de preco médio
 
 
 class RealStateFundsCalculate(PaperCommons):

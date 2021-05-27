@@ -8,8 +8,8 @@ class FinantialOperation(BaseModel):
     date: date
     operation_type: str
     operation_class: str
-    paper: str
-    paper_type: str
+    ticker: str
+    ticker_type: str
     units: float
     unitary_value: float
     amount: Optional[float] = None
@@ -18,6 +18,13 @@ class FinantialOperation(BaseModel):
 
     @root_validator
     def amount_none(cls, values):
-        if not(values["amount"]):
+        if not (values["amount"]):
             values["amount"] = values["units"] * values["unitary_value"]
         return values
+
+    @root_validator
+    def emoluments_none(cls, values):
+        if not (values["emoluments"]):
+            values["emoluments"] = 0
+        return values
+

@@ -4,6 +4,12 @@
 # TODO validar o conceito de resumo anual
 # TODO para fundos imobiliarios sempre aplica o imposto?
 # TODO verificar para qual período devo realizar a apuração (mensal/anual)?
+# TODO como ele chegou naquele preço médio da MAGALU? WTF
+# TODO devo somar os emolumentos de todas as operações?
+
+
+# TODO DAQUI P FRENTE: ADICIONAR IRRF VENDA DAY TRADE
+# TODO APURAR IMPOSTO A CADA VENDA
 
 
 

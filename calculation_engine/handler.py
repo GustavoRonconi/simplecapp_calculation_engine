@@ -9,128 +9,163 @@ from calculation_engine.utils import SimpleCappUtils
 class FinopsCommons:
     """Commons operations to all financial operations"""
 
-    def _calcule_average_purchase_price_by_ticker_day(
-        self,
-        day: date,
-        finantial_operations_by_ticket: list,
-        average_price_ticket: dict,
-    ):
-        """To calculate average price """
-        for index, fin_op in enumerate(finantial_operations_by_ticket, 1):
-            if fin_op.date <= day:
-                average_price_ticket[fin_op.ticker][day]["total_units"] += fin_op.units
-                average_price_ticket[fin_op.ticker][day][
-                    "total_amount_with_emoluments"
-                ] = (
-                    average_price_ticket[fin_op.ticker][day][
-                        "total_amount_with_emoluments"
-                    ]
-                    + fin_op.amount
-                    + fin_op.emoluments
-                )
-            if index == len(finantial_operations_by_ticket):
-                if average_price_ticket[fin_op.ticker][day]["total_units"] == 0:
-                    del average_price_ticket[fin_op.ticker][day]
-                    continue
-
-                average_price_ticket[fin_op.ticker][day]["average_price"] = (
-                    average_price_ticket[fin_op.ticker][day][
-                        "total_amount_with_emoluments"
-                    ]
-                    / average_price_ticket[fin_op.ticker][day]["total_units"]
-                )
-        return average_price_ticket
-
-    def agroup_financial_operations_by_operation_type(
-        self, financial_operations: list
-    ) -> dict:
-        """To agroup financial operations by operation type"""
-        agrouped_financial_operations_by_operation_type = {
-            operation_type: SimpleCappUtils.get_list_with_filters(
-                {"operation_type": operation_type}, financial_operations
-            )
-            for operation_type in self.mapper_ticker_classes.keys()
-        }
-
-    def agroup_financial_operations_by_operation_class(
-        self, financial_operations: list
-    ) -> dict:
-        """To agroup financial operations by operation class"""
-        agrouped_financial_operations_by_operation_class = {
-            operation_class: SimpleCappUtils.get_list_with_filters(
-                {"operation_class": operation_class}, financial_operations
-            )
-            for operation_class in self.mapper_ticker_classes.keys()
-        }
-
-        return agrouped_financial_operations_by_operation_class
-
-    def calcule_average_purchase_price(self, financial_operations: list) -> dict:
-        """To calcule average purchase price to operations by ticker until the referenced date"""
-        purchase_financial_operations = SimpleCappUtils.get_list_with_filters(
-            {"operation_type": "purchase"}, financial_operations,
-        )
-        purchase_asset_portfolio = SimpleCappUtils.get_unique_values(
-            purchase_financial_operations, "ticker"
-        )
-
-        purchase_financial_operations_by_tiker = SimpleCappUtils.index_list_by_list_of_keys(
-            purchase_financial_operations, purchase_asset_portfolio, "ticker"
-        )
-
-        purchase_operation_days = sorted(
-            SimpleCappUtils.get_unique_values(purchase_financial_operations, "date")
-        )
-        average_price_purchase_operations_by_ticker = {
-            ticker: {
-                date: {"total_units": 0, "total_amount_with_emoluments": 0}
-                for date in purchase_operation_days
-            }
-            for ticker in purchase_asset_portfolio
-        }
-
-        for day in purchase_operation_days:
-            for (
-                purchase_financial_operations
-            ) in purchase_financial_operations_by_tiker.values():
-                average_price_purchase_operations_by_ticker = self._calcule_average_purchase_price_by_ticker_day(
-                    day,
-                    purchase_financial_operations,
-                    average_price_purchase_operations_by_ticker,
-                )
-
-        return average_price_purchase_operations_by_ticker
-
-    def calcule_sales_profit_loss(self, operation: dict, average_price: dict) -> list:
-        return (operation.amount + operation.emoluments) - average_price[operation.date]
-
-
-class RealStateFunds(FinopsCommons):
-    """To handler real state funds operations"""
-    def _get_unique_year_months(operations: list) -> list:
+    def _get_unique_year_months(self, operations: list) -> list:
         """To get a unique year months"""
         year_months = []
         for op in operations:
             year_month = str(op.date.year) + str(op.date.month)
             if year_month not in year_months:
                 year_months.append(year_month)
-        
+
         return year_months
-    
+
+    def _calcule_average_purchase_price_certain_day(
+        self,
+        day: date,
+        finantial_operations_by_ticket: list,
+        average_price_ticket: dict,
+    ):
+
+        """To calculate average price up to a certain day"""
+        mapper_math_operations_by_operation_type = {
+            "sale": lambda x, y, z=0: x - y + z,
+            "purchase": lambda x, y, z=0: x + y + z,
+        }
+
+        condition_average_price = []
+        for fin_op in finantial_operations_by_ticket:
+            condition_average_price.append(fin_op.operation_type)
+            if fin_op.date <= day:
+
+                # TO APPLY POSITION
+                position_to_calc_average_price = average_price_ticket[fin_op.ticker][
+                    day
+                ]["position"]
+                average_price_ticket[fin_op.ticker][day][
+                    "position"
+                ] = mapper_math_operations_by_operation_type[fin_op.operation_type](
+                    average_price_ticket[fin_op.ticker][day]["position"], fin_op.units
+                )
+
+                # TO APPLY TOTAL MONTHLY
+                amount_to_calc_average_price = average_price_ticket[fin_op.ticker][day][
+                    "total_amount_with_extras"
+                ]
+                average_price_ticket[fin_op.ticker][day][
+                    "total_amount_with_extras"
+                ] = mapper_math_operations_by_operation_type[fin_op.operation_type](
+                    average_price_ticket[fin_op.ticker][day][
+                        "total_amount_with_extras"
+                    ],
+                    fin_op.amount,
+                    fin_op.emoluments,
+                )
+
+                # CONDITION AVERAGE PRICE
+                if fin_op.operation_type == "purchase":
+                    amount_to_calc_average_price = average_price_ticket[fin_op.ticker][
+                        day
+                    ]["total_amount_with_extras"]
+                    position_to_calc_average_price = average_price_ticket[
+                        fin_op.ticker
+                    ][day]["position"]
+
+            if fin_op.date == day:
+                average_price_ticket[fin_op.ticker][day][
+                    "operation_type"
+                ] = fin_op.operation_type
+                if position_to_calc_average_price <= 0:
+                    average_price_ticket[fin_op.ticker][day][
+                        "average_purchase_price"
+                    ] = None
+                    continue
+                average_price_ticket[fin_op.ticker][day]["average_purchase_price"] = (
+                    amount_to_calc_average_price / position_to_calc_average_price
+                )
+
+        return average_price_ticket
+
+    def calcule_average_purchase_price_for_each_sale(
+        self, financial_operations: list
+    ) -> dict:
+        """To calcule average purchase price for each sale operation"""
+
+        ordered_financial_operations = sorted(
+            financial_operations, key=lambda x: x.date
+        )
+
+        asset_portfolio = SimpleCappUtils.get_unique_values(
+            ordered_financial_operations, "ticker"
+        )
+
+        operation_days = SimpleCappUtils.get_unique_values(
+            ordered_financial_operations, "date"
+        )
+
+        financial_operations_by_ticker = SimpleCappUtils.index_list_by_list_of_keys(
+            ordered_financial_operations, asset_portfolio, "ticker"
+        )
+
+        operations_days_by_ticker = {
+            ticker: sorted(list(set([operation.date for operation in operations])))
+            for ticker, operations in financial_operations_by_ticker.items()
+        }
+
+        average_price_purchase_for_each_sale_by_ticker = {
+            ticker: {
+                date: {
+                    "position": 0,
+                    "total_amount_with_extras": 0,
+                    "operation_type": None,
+                }
+                for date in operations_days_by_ticker[ticker]
+            }
+            for ticker in asset_portfolio
+        }
+
+        for ticker, financial_operations in financial_operations_by_ticker.items():
+            for day in operations_days_by_ticker[ticker]:
+                average_price_purchase_operations_by_ticker = self._calcule_average_purchase_price_certain_day(
+                    day,
+                    financial_operations,
+                    average_price_purchase_for_each_sale_by_ticker,
+                )
+        return average_price_purchase_operations_by_ticker
+
+    def calcule_sales_profit_loss(self, operation: dict, average_price: dict) -> list:
+        return (operation.amount + operation.emoluments) - average_price[operation.date]
+
+    def agroup_financial_operations_by_operation_type(
+        self, financial_operations: list, ticker_classes: list
+    ) -> dict:
+        """To agroup financial operations by operation type"""
+        agrouped_financial_operations_by_operation_type = {
+            operation_type: SimpleCappUtils.get_list_with_filters(
+                {"operation_type": operation_type}, financial_operations
+            )
+            for operation_type in ticker_classes
+        }
+
+class RealStateFunds(FinopsCommons):
+    """To handler real state funds operations"""
+
     def _get_last_position_in_month(averege_price_by_dict):
         pass
 
     def _process_normal_operations(self, operations: list, average_price: dict) -> list:
-        tickers = SimpleCappUtils.get_unique_values(operations, 'ticker')
-        year_month = self._get_unique_year_months(operations)
+        tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
+        year_months = self._get_unique_year_months(operations)
 
-        compile_normal_operations = {ticket: {year: {"position": 0, "average_price": average_price[ticket][]} for year in year_month} for ticket in tickers}
+        compile_normal_operations = {
+            ticket: {
+                year_month: {"position": 0, "average_price": average_price[ticket]}
+                for year_month in year_months
+            }
+            for ticket in tickers
+        }
 
         for op in operations:
             year_month = str(op.date.year) + str(op.date.month)
-            
-
-
 
     def _process_day_trade_operations(operations: list) -> list:
         return []
@@ -193,9 +228,9 @@ class NormalCalculate(FinopsCommons):
     }
 
     def process(self, operations) -> list:
-        average_price = self.calcule_average_purchase_price(operations)
+        average_price = self.calcule_average_purchase_price_for_each_sale(operations)
         agrouped_financial_operations_by_operation_type = self.agroup_financial_operations_by_operation_type(
-            operations
+            operations, self.mapper_operation_types.keys()
         )
         sumamary_by_ticker = []
         for (
@@ -221,6 +256,19 @@ class CalculationEngine(FinopsCommons):
         "normal": NormalCalculate(),
     }
 
+    def _agroup_financial_operations_by_operation_class(
+        self, financial_operations: list
+    ) -> dict:
+        """To agroup financial operations by operation class"""
+        agrouped_financial_operations_by_operation_class = {
+            operation_class: SimpleCappUtils.get_list_with_filters(
+                {"operation_class": operation_class}, financial_operations
+            )
+            for operation_class in self.mapper_operation_classes.keys()
+        }
+
+        return agrouped_financial_operations_by_operation_class
+
     def __init__(self, message: str) -> None:
         try:
             message_dict = json.loads(message)
@@ -229,7 +277,7 @@ class CalculationEngine(FinopsCommons):
             raise InvalidAnnualSummary()
 
     def process(self) -> None:
-        agrouped_financial_operations_by_operation_class = self.agroup_financial_operations_by_operation_class(
+        agrouped_financial_operations_by_operation_class = self._agroup_financial_operations_by_operation_class(
             self.annual_summary.financial_operations
         )
 

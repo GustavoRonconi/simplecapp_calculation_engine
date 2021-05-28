@@ -163,6 +163,8 @@ class FinopsCommons:
                 average_price_reference = reference_date, average_price
 
         if average_price_reference[0] <= max_date:
+            average_price_reference[1].pop("total_amount_with_extras", None)
+            average_price_reference[1].pop("operation_type", None)
             return average_price_reference[1]
         
         return {'position': 0.0, 'average_purchase_price': 0.0}
@@ -178,13 +180,13 @@ class RealStateFunds(FinopsCommons):
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
         year_months_to_reference_year = self.compile_year_months_reference_year(operations[0].date.year)
 
-        compile_normal_operations = {
-            ticker: {
-                year_month: self.get_last_position_average_price_for_month(average_price[ticker], year_month)
+        compile_normal_operations = [
+            
+                {**self.get_last_position_average_price_for_month(average_price[ticker], year_month), **{"year_month": year_month, "ticker": ticker}}
                 for year_month in year_months_to_reference_year
-            }
+            
             for ticker in tickers
-        }
+        ]
 
         for op in operations:
             year_month = str(op.date.year) + str(op.date.month)
@@ -197,7 +199,6 @@ class RealStateFunds(FinopsCommons):
         operations: list,
         operation_class: str,
         average_price: dict = None,
-        purchase_day_price: dict = None,
     ) -> dict:
         sumamary_by_ticker = []
 
@@ -213,14 +214,15 @@ class RealStateFunds(FinopsCommons):
 class Stock(FinopsCommons):
     """To handler stook operations"""
 
-    def process(self, operations, operation_class: str) -> dict:
+    def process(self, operations, operation_class: str, average_price: dict) -> dict:
         return []
 
 
 class BDR(FinopsCommons):
     """To handler stook operations"""
 
-    pass
+    def process(self, operations, operation_class: str, average_price: dict) -> dict:
+        return []
 
 
 class DayTradeCalculate(FinopsCommons):
@@ -313,5 +315,3 @@ class CalculationEngine(FinopsCommons):
                     finantial_operations
                 )
             )
-
-        print(1)

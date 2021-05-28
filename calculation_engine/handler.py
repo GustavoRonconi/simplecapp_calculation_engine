@@ -1,5 +1,6 @@
 import json
-from datetime import date
+import calendar
+from datetime import date, datetime
 
 from calculation_engine.exceptions import InvalidAnnualSummary
 from calculation_engine.models.annual_summary import AnnualSummary
@@ -135,33 +136,54 @@ class FinopsCommons:
     def calcule_sales_profit_loss(self, operation: dict, average_price: dict) -> list:
         return (operation.amount + operation.emoluments) - average_price[operation.date]
 
-    def agroup_financial_operations_by_operation_type(
-        self, financial_operations: list, ticker_classes: list
+    def agroup_financial_operations_by_ticker_type(
+        self, financial_operations: list, ticker_types: list
     ) -> dict:
-        """To agroup financial operations by operation type"""
-        agrouped_financial_operations_by_operation_type = {
-            operation_type: SimpleCappUtils.get_list_with_filters(
-                {"operation_type": operation_type}, financial_operations
+        """To agroup financial operations by ticker type"""
+        agrouped_financial_operations_by_ticker_type = {
+            ticker_type: SimpleCappUtils.get_list_with_filters(
+                {"ticker_type": ticker_type}, financial_operations
             )
-            for operation_type in ticker_classes
+            for ticker_type in ticker_types
         }
+
+        return agrouped_financial_operations_by_ticker_type
+
+    def compile_year_months_reference_year(self, reference_year: int) -> list:
+        """To compile a list of years months based in reference year"""
+        return [f"{i:02d}/{reference_year}" for i in range(1,13)]
+    
+    def get_last_position_average_price_for_month(self, average_price_by_ticker: dict, year_month: str) -> dict:
+        """To get a last position and average price for a specific month"""
+        month, year = year_month.split('/')
+        max_date = date(int(year), int(month), calendar.monthrange(int(year), int(month))[1]) 
+        average_price_reference = (next(iter(average_price_by_ticker)), average_price_by_ticker[next(iter(average_price_by_ticker))])
+        for reference_date, average_price in average_price_by_ticker.items():
+            if reference_date <= max_date:
+                average_price_reference = reference_date, average_price
+
+        if average_price_reference[0] <= max_date:
+            return average_price_reference[1]
+        
+        return {'position': 0.0, 'average_purchase_price': 0.0}
+
+            
+
+
 
 class RealStateFunds(FinopsCommons):
     """To handler real state funds operations"""
 
-    def _get_last_position_in_month(averege_price_by_dict):
-        pass
-
     def _process_normal_operations(self, operations: list, average_price: dict) -> list:
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
-        year_months = self._get_unique_year_months(operations)
+        year_months_to_reference_year = self.compile_year_months_reference_year(operations[0].date.year)
 
         compile_normal_operations = {
-            ticket: {
-                year_month: {"position": 0, "average_price": average_price[ticket]}
-                for year_month in year_months
+            ticker: {
+                year_month: self.get_last_position_average_price_for_month(average_price[ticker], year_month)
+                for year_month in year_months_to_reference_year
             }
-            for ticket in tickers
+            for ticker in tickers
         }
 
         for op in operations:
@@ -180,7 +202,7 @@ class RealStateFunds(FinopsCommons):
         sumamary_by_ticker = []
 
         if operation_class == "normal":
-            self._process_normal_operations()
+            self._process_normal_operations(operations, average_price)
 
         elif operation_class == "day_trade":
             self._process_day_trade_operations()
@@ -229,7 +251,7 @@ class NormalCalculate(FinopsCommons):
 
     def process(self, operations) -> list:
         average_price = self.calcule_average_purchase_price_for_each_sale(operations)
-        agrouped_financial_operations_by_operation_type = self.agroup_financial_operations_by_operation_type(
+        agrouped_financial_operations_by_operation_type = self.agroup_financial_operations_by_ticker_type(
             operations, self.mapper_operation_types.keys()
         )
         sumamary_by_ticker = []

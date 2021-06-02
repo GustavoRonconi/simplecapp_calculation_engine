@@ -12,7 +12,7 @@ def finantial_operation_message():
         "units": 4,
         "unitary_value": 99.00,
         "amount": 396.00,
-        "emoluments": 0.12,
+        "operation_costs": 0.12,
         "currency_code": "BRL",
     }
 

@@ -13,7 +13,7 @@ class FinantialOperation(BaseModel):
     units: float
     unitary_value: float
     amount: Optional[float] = None
-    emoluments: Optional[float] = None
+    operation_costs: Optional[float] = None
     currency_code: str
 
     @root_validator
@@ -23,8 +23,8 @@ class FinantialOperation(BaseModel):
         return values
 
     @root_validator
-    def emoluments_none(cls, values):
-        if not (values["emoluments"]):
-            values["emoluments"] = 0
+    def operation_costs_none(cls, values):
+        if not (values["operation_costs"]):
+            values["operation_costs"] = 0
         return values
 

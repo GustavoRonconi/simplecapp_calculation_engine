@@ -12,7 +12,7 @@
             "units": 4,
             "unitary_value": 99.00,
             "amount": 396.00,
-            "emoluments": 0.12,
+            "operation_costs": 0.12,
             "currency_code": "BRL"
         },
         {
@@ -24,7 +24,7 @@
             "units": 1,
             "unitary_value": 99.00,
             "amount": 99.00,
-            "emoluments": 0.03,
+            "operation_costs": 0.03,
             "currency_code": "BRL"
         },
         {
@@ -36,7 +36,7 @@
             "units": 15,
             "unitary_value": 9.92,
             "amount": null,
-            "emoluments": null,
+            "operation_costs": null,
             "currency_code": "BRL"
         },
         {
@@ -48,7 +48,7 @@
             "units": 15,
             "unitary_value": 10.92,
             "amount": null,
-            "emoluments": 0.2,
+            "operation_costs": 0.2,
             "currency_code": "BRL"
         },
         {
@@ -60,7 +60,7 @@
             "units": 16,
             "unitary_value": 9.92,
             "amount": null,
-            "emoluments": 0.2,
+            "operation_costs": 0.2,
             "currency_code": "BRL"
         },
         {
@@ -72,7 +72,7 @@
             "units": 16,
             "unitary_value": 9.92,
             "amount": null,
-            "emoluments": null,
+            "operation_costs": null,
             "currency_code": "BRL"
         },
         {
@@ -84,7 +84,30 @@
             "units": 1,
             "unitary_value": 9.92,
             "amount": null,
-            "emoluments": 0.2,
+            "operation_costs": 0.2,
+            "currency_code": "BRL"
+        },{
+            "date": "2020-10-06",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "ticker": "XPLG11",
+            "ticker_type": "fiis",
+            "units": 1,
+            "unitary_value": 127.80,
+            "amount": null,
+            "operation_costs": 0.08,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-10-06",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "ticker": "XPLG11",
+            "ticker_type": "fiis",
+            "units": 3,
+            "unitary_value": 127.80,
+            "amount": null,
+            "operation_costs": 0.08,
             "currency_code": "BRL"
         },
         {
@@ -96,7 +119,7 @@
             "units": 1,
             "unitary_value": 128.80,
             "amount": 128.80,
-            "emoluments": 0.08,
+            "operation_costs": 0.08,
             "currency_code": "BRL"
         },
         {
@@ -108,7 +131,7 @@
             "units": 3,
             "unitary_value": 128.80,
             "amount": 386.43,
-            "emoluments": 0.08,
+            "operation_costs": 0.08,
             "currency_code": "BRL"
         }
     ]

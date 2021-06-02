@@ -59,7 +59,7 @@ class FinopsCommons:
                         "total_amount_with_extras"
                     ],
                     fin_op.amount,
-                    fin_op.emoluments,
+                    fin_op.operation_costs,
                 )
 
                 # CONDITION AVERAGE PRICE
@@ -134,7 +134,7 @@ class FinopsCommons:
         return average_price_purchase_operations_by_ticker
 
     def calcule_sales_profit_loss(self, operation: dict, average_price: dict) -> list:
-        return (operation.amount + operation.emoluments) - average_price[operation.date]
+        return (operation.amount + operation.operation_costs) - average_price[operation.date]
 
     def agroup_financial_operations_by_ticker_type(
         self, financial_operations: list, ticker_types: list
@@ -151,13 +151,20 @@ class FinopsCommons:
 
     def compile_year_months_reference_year(self, reference_year: int) -> list:
         """To compile a list of years months based in reference year"""
-        return [f"{i:02d}/{reference_year}" for i in range(1,13)]
-    
-    def get_last_position_average_price_for_month(self, average_price_by_ticker: dict, year_month: str) -> dict:
+        return [f"{i:02d}/{reference_year}" for i in range(1, 13)]
+
+    def _get_last_position_average_price_for_month(
+        self, average_price_by_ticker: dict, year_month: str
+    ) -> dict:
         """To get a last position and average price for a specific month"""
-        month, year = year_month.split('/')
-        max_date = date(int(year), int(month), calendar.monthrange(int(year), int(month))[1]) 
-        average_price_reference = (next(iter(average_price_by_ticker)), average_price_by_ticker[next(iter(average_price_by_ticker))])
+        month, year = year_month.split("/")
+        max_date = date(
+            int(year), int(month), calendar.monthrange(int(year), int(month))[1]
+        )
+        average_price_reference = (
+            next(iter(average_price_by_ticker)),
+            average_price_by_ticker[next(iter(average_price_by_ticker))],
+        )
         for reference_date, average_price in average_price_by_ticker.items():
             if reference_date <= max_date:
                 average_price_reference = reference_date, average_price
@@ -166,11 +173,43 @@ class FinopsCommons:
             average_price_reference[1].pop("total_amount_with_extras", None)
             average_price_reference[1].pop("operation_type", None)
             return average_price_reference[1]
-        
-        return {'position': 0.0, 'average_purchase_price': 0.0}
 
-            
+        return {"position": 0.0, "average_purchase_price": 0.0}
 
+    def calcule_monthly_params(
+        self,
+        operations: list,
+        average_price_by_ticker: dict,
+        year_month: str,
+        ticker: str,
+    ) -> dict:
+        """To calcule params of operation in year month by operation type and ticker"""
+        monthly_params = {
+            **self._get_last_position_average_price_for_month(
+                average_price_by_ticker, year_month
+            ),
+            **{
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0
+            },
+        }
+        mapper_operation_type_factor = {"sale": -1, "purchase": 1}
+
+        for op in operations:
+            operation_month = op.date.strftime("%m/%Y")
+            if operation_month == year_month and op.ticker == ticker:
+                monthly_params["total_amount_" + op.operation_type] += op.amount + (
+                    op.operation_costs * mapper_operation_type_factor[op.operation_type]
+                )
+                monthly_params["total_units_" + op.operation_type] += op.units
+                if op.operation_type == "sale":
+                    monthly_params["cgs"] += (op.units*monthly_params["average_purchase_price"])
+        monthly_params["result"] = monthly_params["total_amount_sale"] - monthly_params["cgs"]
+
+        return monthly_params
 
 
 class RealStateFunds(FinopsCommons):
@@ -178,35 +217,41 @@ class RealStateFunds(FinopsCommons):
 
     def _process_normal_operations(self, operations: list, average_price: dict) -> list:
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
-        year_months_to_reference_year = self.compile_year_months_reference_year(operations[0].date.year)
+        year_months_to_reference_year = self.compile_year_months_reference_year(
+            operations[0].date.year
+        )
 
-        compile_normal_operations = [
-            
-                {**self.get_last_position_average_price_for_month(average_price[ticker], year_month), **{"year_month": year_month, "ticker": ticker}}
+        compile_normal_operations = {
+            ticker: {
+                year_month: {
+                    **self.calcule_monthly_params(
+                        operations, average_price[ticker], year_month, ticker
+                    ),
+                    **{
+                        "year_month": year_month,
+                        "ticker": ticker,
+                    },
+                }
                 for year_month in year_months_to_reference_year
-            
+            }
             for ticker in tickers
-        ]
+        }
 
-        for op in operations:
-            year_month = str(op.date.year) + str(op.date.month)
+        return SimpleCappUtils.unpack_dict_in_list_of_rows(2, compile_normal_operations)
 
     def _process_day_trade_operations(operations: list) -> list:
         return []
 
     def process(
-        self,
-        operations: list,
-        operation_class: str,
-        average_price: dict = None,
+        self, operations: list, operation_class: str, average_price: dict = None,
     ) -> dict:
         sumamary_by_ticker = []
 
         if operation_class == "normal":
-            self._process_normal_operations(operations, average_price)
+            sumamary_by_ticker.extend(self._process_normal_operations(operations, average_price))
 
-        elif operation_class == "day_trade":
-            self._process_day_trade_operations()
+        # elif operation_class == "day_trade":
+        #     self._process_day_trade_operations()
 
         return sumamary_by_ticker
 

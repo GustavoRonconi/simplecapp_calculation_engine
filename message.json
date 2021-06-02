@@ -72,7 +72,7 @@
             "units": 16,
             "unitary_value": 9.92,
             "amount": null,
-            "operation_costs": null,
+            "operation_costs": 0.2,
             "currency_code": "BRL"
         },
         {
@@ -94,6 +94,18 @@
             "ticker_type": "fiis",
             "units": 1,
             "unitary_value": 127.80,
+            "amount": null,
+            "operation_costs": 0.08,
+            "currency_code": "BRL"
+        },
+        {
+            "date": "2020-10-11",
+            "operation_type": "purchase",
+            "operation_class": "normal",
+            "ticker": "XPLG11",
+            "ticker_type": "fiis",
+            "units": 1,
+            "unitary_value": 129.80,
             "amount": null,
             "operation_costs": 0.08,
             "currency_code": "BRL"

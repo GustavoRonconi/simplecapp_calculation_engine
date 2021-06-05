@@ -14,6 +14,7 @@ class FinantialOperation(BaseModel):
     unitary_value: float
     amount: Optional[float] = None
     operation_costs: Optional[float] = None
+    irrf: Optional[float] = None
     currency_code: str
 
     @root_validator

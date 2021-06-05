@@ -19,6 +19,7 @@ def test_finantial_operation_valid(finantial_operation_message):
         "amount": 396.00,
         "operation_costs": 0.12,
         "currency_code": "BRL",
+        "irrf": 0.015,
     }
 
     assert finantial_operation.dict() == expected_financial_operation

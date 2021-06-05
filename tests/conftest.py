@@ -14,6 +14,7 @@ def finantial_operation_message():
         "amount": 396.00,
         "operation_costs": 0.12,
         "currency_code": "BRL",
+        "irrf": 0.015,
     }
 
 

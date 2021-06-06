@@ -8,6 +8,8 @@ from calculation_engine.models.annual_summary import AnnualSummary
 from calculation_engine.utils import SimpleCappUtils
 from calculation_engine.exceptions import InvalidPositionDayTrade
 
+# todo quebrar um poco este hander, deixar apenas o CalculationEngine
+
 
 class RealStateFunds:
     """To handler real state funds operations"""
@@ -195,6 +197,8 @@ class DayTradeCalculate(FinopsCommons):
         )
 
     def process(self, operations) -> list:
+        if not operations:
+            return []
         agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(
             operations, self.mapper_ticker_types.keys()
         )
@@ -371,6 +375,8 @@ class NormalCalculate(FinopsCommons):
         return SimpleCappUtils.unpack_dict_in_list_of_rows(2, compile_normal_operations)
 
     def process(self, operations) -> list:
+        if not operations:
+            return []
         average_price = self._calcule_average_purchase_price_for_each_sale(operations)
         agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(
             operations, self.mapper_ticker_types.keys()

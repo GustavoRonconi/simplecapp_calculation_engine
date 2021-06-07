@@ -8,7 +8,7 @@ def finantial_normal_operation_message():
         "operation_type": "purchase",
         "operation_class": "normal",
         "ticker": "CPTS11",
-        "ticker_type": "FIIs",
+        "ticker_type": "fiis",
         "units": 4,
         "unitary_value": 99.00,
         "amount": 396.00,
@@ -22,10 +22,10 @@ def finantial_normal_operation_message():
 def finantial_day_trade_operation_message():
     return {
         "date": "2020-10-26",
-        "operation_type": "day-trade",
-        "operation_class": "normal",
+        "operation_type": "purchase",
+        "operation_class": "day_trade",
         "ticker": "ITSA4",
-        "ticker_type": "stook",
+        "ticker_type": "stock",
         "units": 4,
         "unitary_value": 99.00,
         "amount": 396.00,

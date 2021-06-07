@@ -5,6 +5,14 @@ from calculation_engine.models.finantial_operation import FinantialOperation
 from pydantic.error_wrappers import ValidationError
 
 
+def test_finantial_operation_invalid_values(finantial_normal_operation_message):
+    finantial_normal_operation_message["operation_class"] = "purchase"
+    finantial_normal_operation_message["operation_type"] = "day_trade"
+
+    with pytest.raises(ValidationError):
+        FinantialOperation(**finantial_normal_operation_message)
+
+
 def test_finantial_operation_valid(finantial_normal_operation_message):
     finantial_operation = FinantialOperation(**finantial_normal_operation_message)
 
@@ -13,7 +21,7 @@ def test_finantial_operation_valid(finantial_normal_operation_message):
         "operation_type": "purchase",
         "operation_class": "normal",
         "ticker": "CPTS11",
-        "ticker_type": "FIIs",
+        "ticker_type": "fiis",
         "units": 4,
         "unitary_value": 99.00,
         "amount": 396.00,
@@ -38,9 +46,7 @@ def test_finantial_operation_valid(finantial_normal_operation_message):
         "currency_code",
     ],
 )
-def test_finantial_operation_missing_required_fields(
-    field, finantial_normal_operation_message
-):
+def test_finantial_operation_missing_required_fields(field, finantial_normal_operation_message):
     finantial_normal_operation_message_invalid = finantial_normal_operation_message.copy()
     del finantial_normal_operation_message_invalid[field]
 
@@ -51,9 +57,7 @@ def test_finantial_operation_missing_required_fields(
 def test_finantial_operation_amount_none(finantial_normal_operation_message):
     finantial_normal_operation_message_without_amount = finantial_normal_operation_message.copy()
     del finantial_normal_operation_message_without_amount["amount"]
-    finantial_operation = FinantialOperation(
-        **finantial_normal_operation_message_without_amount
-    )
+    finantial_operation = FinantialOperation(**finantial_normal_operation_message_without_amount)
 
     assert finantial_operation.amount == (4 * 99.00)
 

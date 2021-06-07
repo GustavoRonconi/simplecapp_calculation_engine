@@ -19,10 +19,10 @@ def test_agroup_operations_by_operation_class(
         [
             {
                 "date": date(2020, 10, 26),
-                "operation_type": "day-trade",
+                "operation_type": "purchase",
                 "operation_class": "normal",
                 "ticker": "ITSA4",
-                "ticker_type": "stook",
+                "ticker_type": "stock",
                 "units": 4,
                 "unitary_value": 99.00,
                 "amount": 396.00,
@@ -50,13 +50,13 @@ def test_agroup_operations_by_operation_class(
     operations = calculation_engine_instance.annual_summary.financial_operations
 
     expected_agrouped_operations_by_operation_class = {
-        "day-trade": [
+        "day_trade": [
             {
                 "date": date(2020, 10, 26),
-                "operation_type": "day-trade",
+                "operation_type": "purchase",
                 "operation_class": "normal",
                 "ticker": "ITSA4",
-                "ticker_type": "stook",
+                "ticker_type": "stock",
                 "units": 4,
                 "unitary_value": 99.00,
                 "amount": 396.00,
@@ -89,7 +89,7 @@ def test_agroup_operations_by_operation_class(
 
     mock_get_list_with_filters.assert_has_calls(
         [
-            mock.call({"operation_class": "day-trade"}, operations),
+            mock.call({"operation_class": "day_trade"}, operations),
             mock.call({"operation_class": "normal"}, operations),
         ]
     )

@@ -15,6 +15,7 @@ def finantial_normal_operation_message():
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
+        "broker": "clear"
     }
 
 
@@ -32,6 +33,7 @@ def finantial_day_trade_operation_message():
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
+        "broker": "xp"
     }
 
 

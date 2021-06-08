@@ -7,7 +7,7 @@ class DayTradeCalculate(FinopsCommons):
     """To hander day_trade financial operation class"""
 
     def _calcule_day_trade_operation_monthly_params(
-        self, operations: list, year_month: str, ticker: str,
+        self, operations: list, year_month: str, ticker: str, broker: str
     ) -> dict:
         """To calcule params of day_trade operations in a reference year_month, indexed by operation type and ticker"""
         monthly_params = {
@@ -23,7 +23,7 @@ class DayTradeCalculate(FinopsCommons):
 
         for operation in operations:
             operation_month = operation.date.strftime("%m/%Y")
-            if operation_month == year_month and operation.ticker == ticker:
+            if operation_month == year_month and operation.ticker == ticker and operation.broker == broker:
                 monthly_params["total_amount_" + operation.operation_type] += operation.amount + (
                     operation.operation_costs * self.mapper_operation_type_factor[operation.operation_type]
                 )
@@ -43,19 +43,23 @@ class DayTradeCalculate(FinopsCommons):
 
     def calcule_day_trade_operations(self, operations: list, **kwargs) -> list:
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
+        brokers = SimpleCappUtils.get_unique_values(operations, "broker")
         year_months_to_reference_year = self.compile_year_months_reference_year(operations[0].date.year)
 
         compile_day_trade_operations = {
-            ticker: {
-                year_month: {
-                    **{"year_month": year_month, "ticker": ticker, "operation_class": "day_trade",},
-                    **self._calcule_day_trade_operation_monthly_params(operations, year_month, ticker),
+            broker: {
+                ticker: {
+                    year_month: {
+                        **{"year_month": year_month, "broker": broker, "ticker": ticker, "operation_class": "day_trade",},
+                        **self._calcule_day_trade_operation_monthly_params(operations, year_month, ticker, broker),
+                    }
+                    for year_month in year_months_to_reference_year
                 }
-                for year_month in year_months_to_reference_year
+                for ticker in tickers
             }
-            for ticker in tickers
+            for broker in brokers
         }
-        return SimpleCappUtils.unpack_dict_in_list_of_rows(2, compile_day_trade_operations)
+        return SimpleCappUtils.unpack_dict_in_list_of_rows(3, compile_day_trade_operations)
 
     def process(self, operations) -> list:
         if not operations:

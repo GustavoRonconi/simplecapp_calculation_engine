@@ -28,6 +28,7 @@ def test_finantial_operation_valid(finantial_normal_operation_message):
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
+        "broker": "clear"
     }
 
     assert finantial_operation.dict() == expected_financial_operation
@@ -44,6 +45,7 @@ def test_finantial_operation_valid(finantial_normal_operation_message):
         "units",
         "unitary_value",
         "currency_code",
+        "broker",
     ],
 )
 def test_finantial_operation_missing_required_fields(field, finantial_normal_operation_message):

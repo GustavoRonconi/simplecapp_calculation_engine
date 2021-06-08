@@ -118,7 +118,12 @@ class NormalCalculate(FinopsCommons):
         compile_normal_operations = {
             ticker: {
                 year_month: {
-                    **{"year_month": year_month, "ticker": ticker, "operation_class": "normal",},
+                    **{
+                        "year_month": year_month,
+                        "broker": None,
+                        "ticker": ticker,
+                        "operation_class": "normal",
+                    },
                     **self._calcule_normal_operation_monthly_params(
                         operations, kwargs["average_price"][ticker], year_month, ticker
                     ),

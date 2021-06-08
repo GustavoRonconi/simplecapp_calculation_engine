@@ -26,6 +26,7 @@ class FinantialOperation(BaseModel):
     date: date
     operation_type: OperationTypeEnum
     operation_class: OperationClassEnum
+    broker: str
     ticker: str
     ticker_type: TickerType
     units: float

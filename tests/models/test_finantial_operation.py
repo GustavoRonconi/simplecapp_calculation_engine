@@ -28,7 +28,7 @@ def test_finantial_operation_valid(finantial_normal_operation_message):
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
-        "broker": "clear"
+        "broker": "clear",
     }
 
     assert finantial_operation.dict() == expected_financial_operation
@@ -62,4 +62,3 @@ def test_finantial_operation_amount_none(finantial_normal_operation_message):
     finantial_operation = FinantialOperation(**finantial_normal_operation_message_without_amount)
 
     assert finantial_operation.amount == (4 * 99.00)
-

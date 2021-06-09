@@ -57,4 +57,3 @@ def annual_summary_message(finantial_normal_operation_message, finantial_day_tra
         "reference_year": 2020,
         "financial_operations": [finantial_normal_operation_message, finantial_day_trade_operation_message,],
     }
-

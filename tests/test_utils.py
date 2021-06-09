@@ -8,12 +8,7 @@ from calculation_engine.utils import SimpleCappUtils, UnpackError
 def list_dict_bands():
     return [
         {"name": "rise against", "genre": "punk", "vocalist": "tim", "country": "eua"},
-        {
-            "name": "bob marley",
-            "genre": "reggae",
-            "vocalist": "bob",
-            "country": "jamaica",
-        },
+        {"name": "bob marley", "genre": "reggae", "vocalist": "bob", "country": "jamaica",},
         {"name": "bad religion", "genre": "punk", "vocalist": "greg", "country": "eua"},
         {"name": "soja", "genre": "reggae", "vocalist": "jacob", "country": "eua"},
     ]
@@ -35,20 +30,14 @@ def test_get_list_with_filters_from_dict_list_no_empty(list_dict_bands):
     filter_dict = {"genre": "reggae", "name": "bob marley"}
     expected_list = [list_dict_bands[1]]
 
-    assert (
-        SimpleCappUtils.get_list_with_filters(filter_dict, list_dict_bands)
-        == expected_list
-    )
+    assert SimpleCappUtils.get_list_with_filters(filter_dict, list_dict_bands) == expected_list
 
 
 def test_get_list_with_filters_from_object_list_no_empty(list_object_bands):
     filter_dict = {"genre": "reggae"}
     expected_list = [list_object_bands[1], list_object_bands[3]]
 
-    assert (
-        SimpleCappUtils.get_list_with_filters(filter_dict, list_object_bands)
-        == expected_list
-    )
+    assert SimpleCappUtils.get_list_with_filters(filter_dict, list_object_bands) == expected_list
 
 
 def test_get_list_with_filters_empty():
@@ -74,10 +63,7 @@ def test_index_list_by_list_of_keys(mock_get_list_with_filters, list_dict_bands)
     )
 
     mock_get_list_with_filters.assert_has_calls(
-        [
-            mock.call({"genre": "punk"}, list_dict_bands),
-            mock.call({"genre": "reggae"}, list_dict_bands),
-        ]
+        [mock.call({"genre": "punk"}, list_dict_bands), mock.call({"genre": "reggae"}, list_dict_bands),]
     )
 
 
@@ -93,18 +79,8 @@ def test_get_unique_values(list_dict_bands):
         (
             2,
             [
-                {
-                    "name": "bob marley",
-                    "genre": "reggae",
-                    "vocalist": "bob",
-                    "country": "jamaica",
-                },
-                {
-                    "name": "soja",
-                    "genre": "reggae",
-                    "vocalist": "jacob",
-                    "country": "eua",
-                },
+                {"name": "bob marley", "genre": "reggae", "vocalist": "bob", "country": "jamaica",},
+                {"name": "soja", "genre": "reggae", "vocalist": "jacob", "country": "eua",},
             ],
         ),
         (3, UnpackError("The level is so much high to unpack")),
@@ -113,26 +89,13 @@ def test_get_unique_values(list_dict_bands):
 def test_unpack_dict_in_list_of_rows(level_unpack, expected_list):
     dict_to_unpack = {
         "raggae": {
-            "jamaica": {
-                "name": "bob marley",
-                "genre": "reggae",
-                "vocalist": "bob",
-                "country": "jamaica",
-            },
-            "eua": {
-                "name": "soja",
-                "genre": "reggae",
-                "vocalist": "jacob",
-                "country": "eua",
-            },
+            "jamaica": {"name": "bob marley", "genre": "reggae", "vocalist": "bob", "country": "jamaica",},
+            "eua": {"name": "soja", "genre": "reggae", "vocalist": "jacob", "country": "eua",},
         }
     }
     if type(expected_list) is not list:
         with pytest.raises(UnpackError):
             SimpleCappUtils.unpack_dict_in_list_of_rows(level_unpack, dict_to_unpack)
-        return   
-     
-    assert (
-        SimpleCappUtils.unpack_dict_in_list_of_rows(level_unpack, dict_to_unpack)
-        == expected_list
-    )
+        return
+
+    assert SimpleCappUtils.unpack_dict_in_list_of_rows(level_unpack, dict_to_unpack) == expected_list

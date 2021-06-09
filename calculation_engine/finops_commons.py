@@ -25,5 +25,3 @@ class FinopsCommons:
     def compile_year_months_reference_year(self, reference_year: int) -> list:
         """To compile a list of years_months based in reference year"""
         return [f"{i:02d}/{reference_year}" for i in range(1, 13)]
-
-

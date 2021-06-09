@@ -4,9 +4,7 @@ class UnpackError(BaseException):
 
 class SimpleCappUtils:
     @classmethod
-    def unpack_dict_in_list_of_rows(
-        cls, level_unpack: int, dict_to_unpack: dict
-    ) -> list:
+    def unpack_dict_in_list_of_rows(cls, level_unpack: int, dict_to_unpack: dict) -> list:
         """To unpack dict values in a list of rows (only dicts os dicts)"""
 
         dicts_by_level = {0: dict_to_unpack.values()}
@@ -58,11 +56,8 @@ class SimpleCappUtils:
         return result_list
 
     @classmethod
-    def index_list_by_list_of_keys(
-        cls, list_to_index: list, list_of_keys: list, key_name: str
-    ) -> dict:
+    def index_list_by_list_of_keys(cls, list_to_index: list, list_of_keys: list, key_name: str) -> dict:
         """To index a list by a list of keys"""
         return {
-            key: SimpleCappUtils.get_list_with_filters({key_name: key}, list_to_index)
-            for key in list_of_keys
+            key: SimpleCappUtils.get_list_with_filters({key_name: key}, list_to_index) for key in list_of_keys
         }

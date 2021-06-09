@@ -9,5 +9,3 @@ class AnnualSummary(BaseModel):
     customer_cpf: str
     reference_year: int
     financial_operations: List[FinantialOperation]
-
-

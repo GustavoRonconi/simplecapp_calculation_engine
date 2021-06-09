@@ -25,7 +25,8 @@ class DayTradeCalculate(FinopsCommons):
             operation_month = operation.date.strftime("%m/%Y")
             if operation_month == year_month and operation.ticker == ticker and operation.broker == broker:
                 monthly_params["total_amount_" + operation.operation_type.value] += operation.amount + (
-                    operation.operation_costs * self.mapper_operation_type_factor[operation.operation_type.value]
+                    operation.operation_costs
+                    * self.mapper_operation_type_factor[operation.operation_type.value]
                 )
                 monthly_params["total_units_" + operation.operation_type.value] += operation.units
                 monthly_params["position"] += (

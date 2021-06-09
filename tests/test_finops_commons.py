@@ -49,5 +49,3 @@ def test_compile_year_months_reference_year(finops_commons_instance):
         "11/2019",
         "12/2019",
     ]
-
-

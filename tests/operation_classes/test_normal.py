@@ -30,6 +30,7 @@ def test_get_last_position_average_price_for_month_previous_dates(normal_calcula
         average_price_by_ticker, year_month
     ) == {"position": 2, "average_purchase_price": 100}
 
+
 def test_get_last_position_average_price_for_month_later_dates(normal_calculate_instance):
     year_month = "05/2020"
     average_price_by_ticker = {

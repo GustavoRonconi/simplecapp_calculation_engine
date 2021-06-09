@@ -12,9 +12,7 @@ def calculation_engine_instance(annual_summary_message):
 
 
 @mock.patch("calculation_engine.handler.SimpleCappUtils.get_list_with_filters",)
-def test_agroup_operations_by_operation_class(
-    mock_get_list_with_filters, calculation_engine_instance
-):
+def test_agroup_operations_by_operation_class(mock_get_list_with_filters, calculation_engine_instance):
     mock_get_list_with_filters.side_effect = [
         [
             {
@@ -93,4 +91,3 @@ def test_agroup_operations_by_operation_class(
             mock.call({"operation_class": "normal"}, operations),
         ]
     )
-

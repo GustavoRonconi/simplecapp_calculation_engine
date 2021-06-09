@@ -12,4 +12,3 @@ class BDR:
             return output_by_ticker_type
 
         return operation_function(operations, reference_year, **{"average_price": average_price})
-

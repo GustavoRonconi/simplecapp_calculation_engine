@@ -18,7 +18,7 @@ class NormalCalculate(FinopsCommons):
         average_price_default = average_price_by_ticker[last_date]
 
         for reference_date, average_price in average_price_by_ticker.items():
-            if reference_date <= max_date:                
+            if reference_date <= max_date:
                 average_price.pop("total_amount_with_operation_costs", None)
                 average_price.pop("operation_type", None)
                 average_price_default = average_price
@@ -62,9 +62,7 @@ class NormalCalculate(FinopsCommons):
                     ](position_to_calc_average_price, operation.units)
 
             if operation.date == day:
-                average_price_ticket[operation.ticker][day][
-                    "operation_type"
-                ] = operation.operation_type.value
+                average_price_ticket[operation.ticker][day]["operation_type"] = operation.operation_type.value
                 if position_to_calc_average_price <= 0:
                     average_price_ticket[operation.ticker][day]["average_purchase_price"] = None
                     continue
@@ -92,8 +90,7 @@ class NormalCalculate(FinopsCommons):
 
         average_price_purchase_for_each_sale_by_ticker = {
             ticker: {
-                day: {"position": 0, "operation_type": None,}
-                for day in operations_days_by_ticker[ticker]
+                day: {"position": 0, "operation_type": None,} for day in operations_days_by_ticker[ticker]
             }
             for ticker in asset_portfolio
         }

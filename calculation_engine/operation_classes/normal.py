@@ -15,17 +15,17 @@ class NormalCalculate(FinopsCommons):
         month, year = year_month.split("/")
         max_date = date(int(year), int(month), calendar.monthrange(int(year), int(month))[1])
         last_date = list(average_price_by_ticker.keys())[0]
-        average_price = average_price_by_ticker[last_date]
+        average_price_default = average_price_by_ticker[last_date]
 
         for reference_date, average_price in average_price_by_ticker.items():
-            if reference_date <= max_date:
-                average_price = average_price
+            if reference_date <= max_date:                
                 average_price.pop("total_amount_with_operation_costs", None)
                 average_price.pop("operation_type", None)
+                average_price_default = average_price
                 last_date = reference_date
 
         if last_date <= max_date:
-            return average_price
+            return average_price_default
 
         return {"position": 0.0, "average_purchase_price": 0.0}
 
@@ -48,21 +48,23 @@ class NormalCalculate(FinopsCommons):
                 # TO APPLY POSITION
                 average_price_ticket[operation.ticker][day][
                     "position"
-                ] = mapper_math_operations_by_operation_type[operation.operation_type](
+                ] = mapper_math_operations_by_operation_type[operation.operation_type.value](
                     average_price_ticket[operation.ticker][day]["position"], operation.units,
                 )
 
                 # CONDITION AVERAGE PRICE
-                if operation.operation_type == "purchase":
+                if operation.operation_type.value == "purchase":
                     amount_to_calc_average_price = mapper_math_operations_by_operation_type[
-                        operation.operation_type
+                        operation.operation_type.value
                     ](amount_to_calc_average_price, operation.amount, operation.operation_costs,)
                     position_to_calc_average_price = mapper_math_operations_by_operation_type[
-                        operation.operation_type
+                        operation.operation_type.value
                     ](position_to_calc_average_price, operation.units)
 
             if operation.date == day:
-                average_price_ticket[operation.ticker][day]["operation_type"] = operation.operation_type
+                average_price_ticket[operation.ticker][day][
+                    "operation_type"
+                ] = operation.operation_type.value
                 if position_to_calc_average_price <= 0:
                     average_price_ticket[operation.ticker][day]["average_purchase_price"] = None
                     continue
@@ -90,7 +92,8 @@ class NormalCalculate(FinopsCommons):
 
         average_price_purchase_for_each_sale_by_ticker = {
             ticker: {
-                day: {"position": 0, "operation_type": None,} for day in operations_days_by_ticker[ticker]
+                day: {"position": 0, "operation_type": None,}
+                for day in operations_days_by_ticker[ticker]
             }
             for ticker in asset_portfolio
         }
@@ -121,25 +124,29 @@ class NormalCalculate(FinopsCommons):
         for operation in operations:
             operation_month = operation.date.strftime("%m/%Y")
             if operation_month == year_month and operation.ticker == ticker:
-                monthly_params["total_amount_" + operation.operation_type] += operation.amount + (
-                    operation.operation_costs * self.mapper_operation_type_factor[operation.operation_type]
+                monthly_params["total_amount_" + operation.operation_type.value] += operation.amount + (
+                    operation.operation_costs
+                    * self.mapper_operation_type_factor[operation.operation_type.value]
                 )
-                monthly_params["total_units_" + operation.operation_type] += operation.units
+                monthly_params["total_units_" + operation.operation_type.value] += operation.units
                 monthly_params["irrf"] += operation.irrf
-                if operation.operation_type == "sale":
+                if operation.operation_type.value == "sale":
                     monthly_params["cgs"] += operation.units * monthly_params["average_purchase_price"]
 
         monthly_params["result"] = monthly_params["total_amount_sale"] - monthly_params["cgs"]
 
         return monthly_params
 
-    def calcule_normal_operations(self, operations: list, **kwargs) -> list:
+    def calcule_normal_operations(self, operations: list, reference_year: int, **kwargs) -> dict:
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
-        year_months_to_reference_year = self.compile_year_months_reference_year(operations[0].date.year)
+        year_months_to_reference_year = self.compile_year_months_reference_year(reference_year)
 
-        compile_normal_operations = {
-            ticker: {
-                year_month: {
+        summary_by_ticker, custody_by_ticker_and_reference_year = {}, {}
+        for ticker in tickers:
+            summary_by_ticker[ticker] = {}
+            custody_by_ticker_and_reference_year[ticker] = {}
+            for year_month in year_months_to_reference_year:
+                summary_by_ticker[ticker][year_month] = {
                     **{
                         "year_month": year_month,
                         "broker": None,
@@ -150,24 +157,42 @@ class NormalCalculate(FinopsCommons):
                         operations, kwargs["average_price"][ticker], year_month, ticker
                     ),
                 }
-                for year_month in year_months_to_reference_year
-            }
-            for ticker in tickers
+
+                if year_month == f"12/{reference_year}":
+                    custody_by_ticker_and_reference_year[ticker][year_month] = {
+                        "ticker": ticker,
+                        "year_month": year_month,
+                        "position": summary_by_ticker[ticker][year_month]["position"],
+                        "average_purchase_price": summary_by_ticker[ticker][year_month][
+                            "average_purchase_price"
+                        ],
+                        "total_amount": (
+                            summary_by_ticker[ticker][year_month]["position"]
+                            * summary_by_ticker[ticker][year_month]["average_purchase_price"]
+                        ),
+                    }
+
+        return {
+            "summary_by_ticker": SimpleCappUtils.unpack_dict_in_list_of_rows(2, summary_by_ticker),
+            "custody_by_ticker_and_reference_year": SimpleCappUtils.unpack_dict_in_list_of_rows(
+                2, custody_by_ticker_and_reference_year
+            ),
         }
 
-        return SimpleCappUtils.unpack_dict_in_list_of_rows(2, compile_normal_operations)
-
-    def process(self, operations) -> list:
+    def process(self, operations: list, reference_year: int) -> dict:
         if not operations:
-            return []
+            return {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
         average_price = self._calcule_average_purchase_price_for_each_sale(operations)
         agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(operations)
-        sumamary_by_ticker = []
+        output_by_operation_class = {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
+
         for (ticker_type, operations) in agrouped_operations_by_ticker_type.items():
-            sumamary_by_ticker.extend(
-                self.mapper_ticker_types[ticker_type].process(
-                    operations, self.calcule_normal_operations, average_price
-                )
+            output_by_ticker_type = self.mapper_ticker_types[ticker_type].process(
+                operations, reference_year, self.calcule_normal_operations, average_price
+            )
+            output_by_operation_class["summary_by_ticker"].extend(output_by_ticker_type["summary_by_ticker"])
+            output_by_operation_class["custody_by_ticker_and_reference_year"].extend(
+                output_by_ticker_type["custody_by_ticker_and_reference_year"]
             )
 
-        return sumamary_by_ticker
+        return output_by_operation_class

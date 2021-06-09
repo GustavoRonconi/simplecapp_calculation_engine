@@ -44,4 +44,5 @@ class CalculationEngine:
         for (operation_class, operations,) in agrouped_operations_by_operation_class.items():
             summary_by_ticker.extend(self.mapper_operation_classes[operation_class].process(operations))
 
+        # TODO Criar uma estratégia de persistência da saída do motor
         print(1)

@@ -1,3 +1,4 @@
+import calendar
 from datetime import date
 
 from calculation_engine.finops_commons import FinopsCommons
@@ -6,6 +7,27 @@ from calculation_engine.utils import SimpleCappUtils
 
 class NormalCalculate(FinopsCommons):
     """To hander normal financial operation class"""
+
+    def _get_last_position_average_price_for_month(
+        self, average_price_by_ticker: dict, year_month: str
+    ) -> dict:
+        """To get a last position and average price for a specific month"""
+        month, year = year_month.split("/")
+        max_date = date(int(year), int(month), calendar.monthrange(int(year), int(month))[1])
+        last_date = list(average_price_by_ticker.keys())[0]
+        average_price = average_price_by_ticker[last_date]
+
+        for reference_date, average_price in average_price_by_ticker.items():
+            if reference_date <= max_date:
+                average_price = average_price
+                average_price.pop("total_amount_with_operation_costs", None)
+                average_price.pop("operation_type", None)
+                last_date = reference_date
+
+        if last_date <= max_date:
+            return average_price
+
+        return {"position": 0.0, "average_purchase_price": 0.0}
 
     def _calcule_average_purchase_price_certain_day(
         self, day: date, operations_by_ticker: list, average_price_ticket: dict,
@@ -139,9 +161,7 @@ class NormalCalculate(FinopsCommons):
         if not operations:
             return []
         average_price = self._calcule_average_purchase_price_for_each_sale(operations)
-        agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(
-            operations, self.mapper_ticker_types.keys()
-        )
+        agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(operations)
         sumamary_by_ticker = []
         for (ticker_type, operations) in agrouped_operations_by_ticker_type.items():
             sumamary_by_ticker.extend(

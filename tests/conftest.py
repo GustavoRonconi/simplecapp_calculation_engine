@@ -1,5 +1,7 @@
 import pytest
 
+from calculation_engine.models.finantial_operation import FinantialOperation
+
 
 @pytest.fixture
 def finantial_normal_operation_message():
@@ -15,8 +17,13 @@ def finantial_normal_operation_message():
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
-        "broker": "clear"
+        "broker": "clear",
     }
+
+
+@pytest.fixture
+def finantial_normal_operation(finantial_normal_operation_message):
+    return FinantialOperation(**finantial_normal_operation_message)
 
 
 @pytest.fixture
@@ -33,21 +40,21 @@ def finantial_day_trade_operation_message():
         "operation_costs": 0.12,
         "currency_code": "BRL",
         "irrf": 0.015,
-        "broker": "xp"
+        "broker": "xp",
     }
 
 
 @pytest.fixture
-def annual_summary_message(
-    finantial_normal_operation_message, finantial_day_trade_operation_message
-):
+def finantial_day_trade_operation(finantial_day_trade_operation_message):
+    return FinantialOperation(**finantial_day_trade_operation_message)
+
+
+@pytest.fixture
+def annual_summary_message(finantial_normal_operation_message, finantial_day_trade_operation_message):
     return {
         "customer_name": "Henry Roetger Silva",
         "customer_cpf": "06716477927",
         "reference_year": 2020,
-        "financial_operations": [
-            finantial_normal_operation_message,
-            finantial_day_trade_operation_message,
-        ],
+        "financial_operations": [finantial_normal_operation_message, finantial_day_trade_operation_message,],
     }
 

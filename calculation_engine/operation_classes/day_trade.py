@@ -65,7 +65,7 @@ class DayTradeCalculate(FinopsCommons):
         if not operations:
             return []
         agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(
-            operations, self.mapper_ticker_types.keys()
+            operations
         )
 
         sumamary_by_ticker = []

@@ -1,25 +1,10 @@
 from datetime import date
-from enum import Enum
 
 from typing import Optional
 
 from pydantic import BaseModel, root_validator
 
-
-class OperationTypeEnum(str, Enum):
-    purchase = "purchase"
-    sale = "sale"
-
-
-class OperationClassEnum(str, Enum):
-    day_trade = "day_trade"
-    normal = "normal"
-
-
-class TickerType(str, Enum):
-    stock = "stock"
-    bdr = "bdr"
-    fiis = "fiis"
+from calculation_engine.constants import OperationClassEnum, OperationTypeEnum, TickerTypeEnum
 
 
 class FinantialOperation(BaseModel):
@@ -28,7 +13,7 @@ class FinantialOperation(BaseModel):
     operation_class: OperationClassEnum
     broker: str
     ticker: str
-    ticker_type: TickerType
+    ticker_type: TickerTypeEnum
     units: float
     unitary_value: float
     amount: Optional[float] = None

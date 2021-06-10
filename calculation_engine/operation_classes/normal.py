@@ -1,12 +1,16 @@
 import calendar
 from datetime import date
 
-from calculation_engine.finops_commons import FinopsCommons
+
+
+from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
 from calculation_engine.utils import SimpleCappUtils
 
 
-class NormalCalculate(FinopsCommons):
+class NormalCalculate(OperationClassesCommons):
     """To hander normal financial operation class"""
+
+    operation_class = "normal"
 
     def _get_last_position_average_price_for_month(
         self, average_price_by_ticker: dict, year_month: str
@@ -45,7 +49,7 @@ class NormalCalculate(FinopsCommons):
         for operation in operations_by_ticker:
             if operation.date <= day:
 
-                # TO APPLY POSITION
+                # APPLY POSITION
                 average_price_ticket[operation.ticker][day][
                     "position"
                 ] = mapper_math_operations_by_operation_type[operation.operation_type.value](
@@ -134,10 +138,10 @@ class NormalCalculate(FinopsCommons):
 
         return monthly_params
 
-    def calcule_normal_operations(self, operations: list, reference_year: int, **kwargs) -> dict:
+    def _calcule_operations_by_ticker(
+        self, operations: list, reference_year: int, year_months_to_reference_year: list, **kwargs
+    ) -> dict:
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
-        year_months_to_reference_year = self.compile_year_months_reference_year(reference_year)
-
         summary_by_ticker, custody_by_ticker_and_reference_year = {}, {}
         for ticker in tickers:
             summary_by_ticker[ticker] = {}
@@ -147,8 +151,9 @@ class NormalCalculate(FinopsCommons):
                     **{
                         "year_month": year_month,
                         "broker": None,
+                        "ticker_type": self.ticker_type_instance.ticker_type,
                         "ticker": ticker,
-                        "operation_class": "normal",
+                        "operation_class": self.operation_class,
                     },
                     **self._calcule_normal_operation_monthly_params(
                         operations, kwargs["average_price"][ticker], year_month, ticker
@@ -174,22 +179,4 @@ class NormalCalculate(FinopsCommons):
             "custody_by_ticker_and_reference_year": SimpleCappUtils.unpack_dict_in_list_of_rows(
                 2, custody_by_ticker_and_reference_year
             ),
-        }
-
-    def process(self, operations: list, reference_year: int) -> dict:
-        if not operations:
-            return {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
-        average_price = self._calcule_average_purchase_price_for_each_sale(operations)
-        agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(operations)
-        output_by_operation_class = {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
-
-        for (ticker_type, operations) in agrouped_operations_by_ticker_type.items():
-            output_by_ticker_type = self.mapper_ticker_types[ticker_type].process(
-                operations, reference_year, self.calcule_normal_operations, average_price
-            )
-            output_by_operation_class["summary_by_ticker"].extend(output_by_ticker_type["summary_by_ticker"])
-            output_by_operation_class["custody_by_ticker_and_reference_year"].extend(
-                output_by_ticker_type["custody_by_ticker_and_reference_year"]
-            )
-
-        return output_by_operation_class
+        }       

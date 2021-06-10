@@ -2,6 +2,14 @@
     "customer_name": "Henry Roetger Silva",
     "customer_cpf": "06716477926",
     "reference_year": 2020,
+    "previous_year_results": [
+        {
+            "year_month": "12/2019",
+            "ticker_type": "fiis",
+            "operation_class": "normal",
+            "result": -50.0
+        }
+    ],
     "financial_operations": [
         {
             "date": "2020-10-26",

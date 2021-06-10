@@ -1,10 +1,12 @@
-from calculation_engine.finops_commons import FinopsCommons
+from calculation_engine import operation_classes
+from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
 from calculation_engine.exceptions import InvalidPositionDayTrade
 from calculation_engine.utils import SimpleCappUtils
 
 
-class DayTradeCalculate(FinopsCommons):
+class DayTradeCalculate(OperationClassesCommons):
     """To hander day_trade financial operation class"""
+    operation_class = "day_trade"
 
     def _calcule_day_trade_operation_monthly_params(
         self, operations: list, year_month: str, ticker: str, broker: str
@@ -42,10 +44,10 @@ class DayTradeCalculate(FinopsCommons):
 
         return monthly_params
 
-    def calcule_day_trade_operations(self, operations: list, reference_year: int, **kwargs) -> dict:
+
+    def _calcule_operations_by_ticker(self, operations: list, reference_year: int, year_months_to_reference_year: list, **kwargs):
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
         brokers = SimpleCappUtils.get_unique_values(operations, "broker")
-        year_months_to_reference_year = self.compile_year_months_reference_year(reference_year)
 
         summary_by_ticker = {
             broker: {
@@ -70,21 +72,4 @@ class DayTradeCalculate(FinopsCommons):
         return {
             "summary_by_ticker": SimpleCappUtils.unpack_dict_in_list_of_rows(3, summary_by_ticker),
             "custody_by_ticker_and_reference_year": [],
-        }
-
-    def process(self, operations: list, reference_year: int) -> dict:
-        if not operations:
-            return {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
-        agrouped_operations_by_ticker_type = self.agroup_operations_by_ticker_type(operations)
-
-        output_by_operation_class = {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
-        for (ticker_type, operations,) in agrouped_operations_by_ticker_type.items():
-            output_by_ticker_type = self.mapper_ticker_types[ticker_type].process(
-                operations, reference_year, self.calcule_day_trade_operations
-            )
-            output_by_operation_class["summary_by_ticker"].extend(output_by_ticker_type["summary_by_ticker"])
-            output_by_operation_class["custody_by_ticker_and_reference_year"].extend(
-                output_by_ticker_type["custody_by_ticker_and_reference_year"]
-            )
-
-        return output_by_operation_class
+        } 

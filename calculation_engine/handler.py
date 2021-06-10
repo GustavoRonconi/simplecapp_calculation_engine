@@ -40,16 +40,19 @@ class CalculationEngine:
             self.annual_summary.financial_operations
         )
         reference_year = self.annual_summary.reference_year
+        previous_year_results = self.annual_summary.previous_year_results
 
-        summary_by_ticker, custody_by_ticker_and_reference_year = [], []
+        summary_by_ticker, custody_by_ticker_and_reference_year, summary_by_monthly = [], [], []
         for (operation_class, operations,) in agrouped_operations_by_operation_class.items():
             output_by_operation_class = self.mapper_operation_classes[operation_class].process(
-                operations, reference_year
+                operations, reference_year, previous_year_results
             )
             summary_by_ticker.extend(output_by_operation_class["summary_by_ticker"])
             custody_by_ticker_and_reference_year.extend(
                 output_by_operation_class["custody_by_ticker_and_reference_year"]
             )
+            summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
+
 
         # TODO Criar uma estratégia de persistência da saída do motor
         print(1)

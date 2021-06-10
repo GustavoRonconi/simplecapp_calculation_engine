@@ -1,5 +1,6 @@
 import pytest
 from datetime import date
+from unittest import mock
 
 from calculation_engine.operation_classes.normal import NormalCalculate
 
@@ -51,3 +52,15 @@ def test_get_last_position_average_price_for_month_later_dates(normal_calculate_
     assert normal_calculate_instance._get_last_position_average_price_for_month(
         average_price_by_ticker, year_month
     ) == {"position": 0.0, "average_purchase_price": 0.0}
+
+
+@mock.patch(
+    "calculation_engine.operation_classes.NormalCalculate._calcule_average_purchase_price_certain_day",
+)
+def test_calcule_average_purchase_price_for_each_sale(
+    mock_average_purchase_price_certain_day, normal_calculate_instance, financial_normal_operations
+):
+    assert True
+
+
+

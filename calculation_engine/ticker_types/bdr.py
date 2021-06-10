@@ -1,14 +1,10 @@
-from typing import Callable
+from calculation_engine.ticker_types.ticker_type_commons import TickerTypesCommons
 
 
-class BDR:
+class BDR(TickerTypesCommons):
     """To handler BDR operations"""
 
-    def process(
-        self, operations: list, reference_year: int, operation_function: Callable, average_price: dict = {},
-    ) -> dict:
-        output_by_ticker_type = {"summary_by_ticker": [], "custody_by_ticker_and_reference_year": []}
-        if len(operations) == 0:
-            return output_by_ticker_type
+    ticker_type = "bdr"
+    exception_sale_limit = 0
+    index_ir = 0.2
 
-        return operation_function(operations, reference_year, **{"average_price": average_price})

@@ -2,7 +2,6 @@ import calendar
 from datetime import date
 
 
-
 from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
 from calculation_engine.utils import SimpleCappUtils
 
@@ -13,7 +12,7 @@ class NormalCalculate(OperationClassesCommons):
     operation_class = "normal"
 
     def _get_last_position_average_price_for_month(
-        self, average_price_by_ticker: dict, year_month: str
+        self, average_price_by_ticker: dict, year_month: str, ticker: str
     ) -> dict:
         """To get a last position and average price for a specific month"""
         month, year = year_month.split("/")
@@ -29,6 +28,14 @@ class NormalCalculate(OperationClassesCommons):
                 last_date = reference_date
 
         if last_date <= max_date:
+            if average_price_default["position"] < 0:
+                self.append_inconsistency(
+                    (
+                        f"""Inconsistência encontrada p/ o ticker {ticker}, posição negativa {average_price_default["position"]}, """
+                        "certifique-se de que os lançamentos de compra foram processados"
+                    )
+                )
+                return
             return average_price_default
 
         return {"position": 0.0, "average_purchase_price": 0.0}
@@ -110,8 +117,14 @@ class NormalCalculate(OperationClassesCommons):
         self, operations: list, average_price_by_ticker: dict, year_month: str, ticker: str,
     ) -> dict:
         """To calcule params of normal operations in a reference year_month, indexed by operation type and ticker"""
+        last_position = self._get_last_position_average_price_for_month(
+            average_price_by_ticker, year_month, ticker
+        )
+        if not last_position:
+            return
+
         monthly_params = {
-            **self._get_last_position_average_price_for_month(average_price_by_ticker, year_month),
+            **last_position,
             **{
                 "total_amount_purchase": 0,
                 "total_amount_sale": 0,
@@ -147,17 +160,19 @@ class NormalCalculate(OperationClassesCommons):
             summary_by_ticker[ticker] = {}
             custody_by_ticker_and_reference_year[ticker] = {}
             for year_month in year_months_to_reference_year:
+                normal_operation_monthly_params = self._calcule_normal_operation_monthly_params(
+                    operations, kwargs["average_price"][ticker], year_month, ticker
+                )
+                if not normal_operation_monthly_params:
+                    del summary_by_ticker[ticker], custody_by_ticker_and_reference_year[ticker]
+                    break
                 summary_by_ticker[ticker][year_month] = {
-                    **{
-                        "year_month": year_month,
-                        "broker": None,
-                        "ticker_type": self.ticker_type_instance.ticker_type,
-                        "ticker": ticker,
-                        "operation_class": self.operation_class,
-                    },
-                    **self._calcule_normal_operation_monthly_params(
-                        operations, kwargs["average_price"][ticker], year_month, ticker
-                    ),
+                    "year_month": year_month,
+                    "broker": None,
+                    "ticker_type": self.ticker_type_instance.ticker_type,
+                    "ticker": ticker,
+                    "operation_class": self.operation_class,
+                    **normal_operation_monthly_params,
                 }
 
                 if year_month == f"12/{reference_year}":
@@ -179,4 +194,4 @@ class NormalCalculate(OperationClassesCommons):
             "custody_by_ticker_and_reference_year": SimpleCappUtils.unpack_dict_in_list_of_rows(
                 2, custody_by_ticker_and_reference_year
             ),
-        }       
+        }

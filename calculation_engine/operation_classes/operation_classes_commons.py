@@ -8,6 +8,8 @@ from calculation_engine.ticker_types import BDR, RealStateFunds, Stock
 class OperationClassesCommons:
     """Commons operations to all financial operations classes"""
 
+    inconsistencies = []
+
     mapper_ticker_types = {
         "fiis": RealStateFunds,
         "stock": Stock,
@@ -15,6 +17,10 @@ class OperationClassesCommons:
     }
 
     mapper_operation_type_factor = {"sale": -1, "purchase": 1}
+
+    def append_inconsistency(self, message: str):
+        if message not in self.inconsistencies:
+            self.inconsistencies.append(message)
 
     def agroup_operations_by_ticker_type(self, operations: list) -> dict:
         """To agroup financial operations by ticker type"""
@@ -131,5 +137,7 @@ class OperationClassesCommons:
             output_by_operation_class["summary_by_monthly"].extend(
                 output_by_ticker_type["summary_by_monthly"]
             )
+
+        output_by_operation_class["inconsistencies"] = self.inconsistencies
 
         return output_by_operation_class

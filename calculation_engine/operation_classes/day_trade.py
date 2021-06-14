@@ -1,11 +1,11 @@
 from calculation_engine import operation_classes
 from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
-from calculation_engine.exceptions import InvalidPositionDayTrade
 from calculation_engine.utils import SimpleCappUtils
 
 
 class DayTradeCalculate(OperationClassesCommons):
     """To hander day_trade financial operation class"""
+
     operation_class = "day_trade"
 
     def _calcule_day_trade_operation_monthly_params(
@@ -36,7 +36,10 @@ class DayTradeCalculate(OperationClassesCommons):
                 )
                 monthly_params["irrf"] += operation.irrf
         if monthly_params["position"] != 0:
-            raise InvalidPositionDayTrade(f"Invalid position to ticker: {ticker}")
+            self.append_inconsistency(
+                f"Inconsistência encontrada p/ o ticker {ticker}, posição diferente de 0, cheque as operações do ticker."
+            )
+            return
 
         monthly_params["result"] = (
             monthly_params["total_amount_sale"] - monthly_params["total_amount_purchase"]
@@ -44,32 +47,34 @@ class DayTradeCalculate(OperationClassesCommons):
 
         return monthly_params
 
-
-    def _calcule_operations_by_ticker(self, operations: list, reference_year: int, year_months_to_reference_year: list, **kwargs):
+    def _calcule_operations_by_ticker(
+        self, operations: list, reference_year: int, year_months_to_reference_year: list, **kwargs
+    ):
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
         brokers = SimpleCappUtils.get_unique_values(operations, "broker")
 
-        summary_by_ticker = {
-            broker: {
-                ticker: {
-                    year_month: {
-                        **{
-                            "year_month": year_month,
-                            "broker": broker,
-                            "ticker": ticker,
-                            "operation_class": "day_trade",
-                        },
-                        **self._calcule_day_trade_operation_monthly_params(
-                            operations, year_month, ticker, broker
-                        ),
+        summary_by_ticker = {}
+        for broker in brokers:
+            summary_by_ticker[broker] = {}
+            for ticker in tickers:
+                summary_by_ticker[broker][ticker] = {}
+                for year_month in year_months_to_reference_year:
+                    day_trade_operation_monthly_params = self._calcule_day_trade_operation_monthly_params(
+                        operations, year_month, ticker, broker
+                    )
+                    if not day_trade_operation_monthly_params:
+                        del summary_by_ticker[broker][ticker]
+                        break
+                    summary_by_ticker[broker][ticker][year_month] = {
+                        "year_month": year_month,
+                        "broker": broker,
+                        "ticker_type": self.ticker_type_instance.ticker_type,
+                        "ticker": ticker,
+                        "operation_class": "day_trade",
+                        **day_trade_operation_monthly_params,
                     }
-                    for year_month in year_months_to_reference_year
-                }
-                for ticker in tickers
-            }
-            for broker in brokers
-        }
+
         return {
             "summary_by_ticker": SimpleCappUtils.unpack_dict_in_list_of_rows(3, summary_by_ticker),
             "custody_by_ticker_and_reference_year": [],
-        } 
+        }

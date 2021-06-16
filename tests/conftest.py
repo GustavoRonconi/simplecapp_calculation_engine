@@ -76,6 +76,7 @@ def financial_normal_operations():
             "operation_costs": 0.08,
             "currency_code": "BRL",
             "broker": "inter",
+            "irrf": 0.02
         },
         {
             "date": "2020-10-11",
@@ -89,6 +90,7 @@ def financial_normal_operations():
             "operation_costs": 0.08,
             "currency_code": "BRL",
             "broker": "inter",
+            "irrf": 0.02
         },
         {
             "date": "2020-10-12",

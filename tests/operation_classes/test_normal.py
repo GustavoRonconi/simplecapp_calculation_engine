@@ -497,3 +497,65 @@ def test_calcule_average_purchase_price_for_each_sale(
 
     assert mock_average_purchase_price_certain_day.call_count == 10
 
+
+@mock.patch("calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
+def test_calcule_normal_operation_monthly_params_negative_position(
+    mock_last_position_average_price_for_month, normal_calculate_instance, financial_normal_operations
+):
+    mock_last_position_average_price_for_month.return_value = None
+    average_price_by_ticker = {
+        date(2020, 5, 3): {
+            "position": 3,
+            "average_purchase_price": 100,
+            "operation_type": "purchase",
+            "total_amount_with_operation_costs": 300,
+        },
+        date(2020, 5, 29): {
+            "position": -2,
+            "average_purchase_price": 100,
+            "operation_type": "sale",
+            "total_amount_with_operation_costs": 200,
+        },
+    }
+    year_month, ticker = "05/2020", "MAFIARUSSA"
+    assert (
+        normal_calculate_instance._calcule_normal_operation_monthly_params(
+            financial_normal_operations, average_price_by_ticker, year_month, ticker
+        )
+        is None
+    )
+
+    mock_last_position_average_price_for_month.assert_called_with(average_price_by_ticker, year_month, ticker)
+
+
+@mock.patch("calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
+def test_calcule_normal_operation_monthly_params(
+    mock_last_position_average_price_for_month, normal_calculate_instance, financial_normal_operations
+):
+
+    mock_last_position_average_price_for_month.return_value = {
+        "position": 5,
+        "average_purchase_price": 129.51,
+    }
+    year_month, ticker, average_price_by_ticker = "10/2020", "XPLG11", {"mock": "mock"}
+
+    expected_monthly_params = {
+        "total_amount_purchase": 641.24,
+        "total_amount_sale": 0,
+        "total_units_purchase": 5,
+        "total_units_sale": 0,
+        "cgs": 0,
+        "irrf": 0.04,
+        "position": 5,
+        "average_purchase_price": 129.51,
+        "result": 0
+    }
+
+    assert (
+        normal_calculate_instance._calcule_normal_operation_monthly_params(
+            financial_normal_operations, average_price_by_ticker, year_month, ticker
+        )
+        == expected_monthly_params
+    )
+
+    mock_last_position_average_price_for_month.assert_called_with(average_price_by_ticker, year_month, ticker)

@@ -59,5 +59,4 @@ class CalculationEngine:
             summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
             inconsistencies.extend(output_by_operation_class["inconsistencies"])
 
-        # TODO Criar uma estratégia de persistência da saída do motor
-        print(1)
+        

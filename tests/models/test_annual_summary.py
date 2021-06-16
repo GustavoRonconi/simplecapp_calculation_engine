@@ -5,10 +5,16 @@ from calculation_engine.models.annual_summary import AnnualSummary
 from pydantic.error_wrappers import ValidationError
 
 
+@pytest.mark.parametrize(
+    "previous_year_results",
+    [None, [{"year_month": "12/2019", "ticker_type": "stock", "operation_class": "normal", "result": -10}]],
+)
 def test_annual_summary_valid(
-    annual_summary_message, finantial_normal_operation_message, finantial_day_trade_operation_message,
+    previous_year_results,
+    annual_summary_message,
+    finantial_normal_operation_message,
+    finantial_day_trade_operation_message,
 ):
-    annual_summary = AnnualSummary(**annual_summary_message)
     finantial_normal_operation_message["date"] = datetime.strptime(
         finantial_normal_operation_message["date"], "%Y-%m-%d"
     ).date()
@@ -22,7 +28,13 @@ def test_annual_summary_valid(
         "customer_cpf": "06716477927",
         "reference_year": 2020,
         "financial_operations": [finantial_normal_operation_message, finantial_day_trade_operation_message,],
+        "previous_year_results": [],
     }
+    if previous_year_results:
+        annual_summary_message["previous_year_results"] = previous_year_results
+        expected_annual_sumary["previous_year_results"] = previous_year_results
+
+    annual_summary = AnnualSummary(**annual_summary_message)
 
     assert annual_summary.dict() == expected_annual_sumary
 

@@ -130,3 +130,6 @@ dmypy.json
 
 #IDLEs
 .vscode/
+
+#Tools
+write_csv.py

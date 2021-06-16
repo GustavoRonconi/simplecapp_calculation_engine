@@ -2,12 +2,12 @@ import pytest
 from datetime import date
 from unittest import mock
 
-from calculation_engine.finops_commons import FinopsCommons
+from calculation_engine.operation_classes import OperationClassesCommons
 
 
 @pytest.fixture
-def finops_commons_instance():
-    return FinopsCommons()
+def operation_classes_commons_instance():
+    return OperationClassesCommons()
 
 
 @pytest.fixture
@@ -16,8 +16,12 @@ def operations(finantial_normal_operation, finantial_day_trade_operation):
     return [finantial_normal_operation, finantial_day_trade_operation]
 
 
-@mock.patch("calculation_engine.finops_commons.SimpleCappUtils.get_list_with_filters",)
-def test_agroup_operations_by_ticker_type(mock_get_list_with_filters, finops_commons_instance, operations):
+@mock.patch(
+    "calculation_engine.operation_classes.operation_classes_commons.SimpleCappUtils.get_list_with_filters",
+)
+def test_agroup_operations_by_ticker_type(
+    mock_get_list_with_filters, operation_classes_commons_instance, operations
+):
     mock_get_list_with_filters.side_effect = [[operations[0]], [operations[1]], []]
 
     expected_agrouped_operations_by_ticker_type = {
@@ -27,15 +31,15 @@ def test_agroup_operations_by_ticker_type(mock_get_list_with_filters, finops_com
     }
 
     assert (
-        finops_commons_instance.agroup_operations_by_ticker_type(operations)
+        operation_classes_commons_instance.agroup_operations_by_ticker_type(operations)
         == expected_agrouped_operations_by_ticker_type
     )
 
 
-def test_compile_year_months_reference_year(finops_commons_instance):
+def test_compile_year_months_reference_year(operation_classes_commons_instance):
     reference_year = 2019
 
-    assert finops_commons_instance.compile_year_months_reference_year(reference_year) == [
+    assert operation_classes_commons_instance.compile_year_months_reference_year(reference_year) == [
         "01/2019",
         "02/2019",
         "03/2019",

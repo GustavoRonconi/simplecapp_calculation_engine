@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from calculation_engine.models.finantial_operation import FinantialOperation
 from pydantic import BaseModel
+
 
 from calculation_engine.constants import TickerTypeEnum, OperationClassEnum
 
@@ -17,5 +18,5 @@ class AnnualSummary(BaseModel):
     customer_name: str
     customer_cpf: str
     reference_year: int
-    previous_year_results: List[PreviewYearResult]
+    previous_year_results: Optional[List[PreviewYearResult]] = []
     financial_operations: List[FinantialOperation]

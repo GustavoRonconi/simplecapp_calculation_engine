@@ -1,6 +1,6 @@
 <br />
 <p align="center">
-  <a href="www.simplecapp.com.br">
+  <a href="http://www.simplecapp.com.br">
     <img src="https://github.com/GustavoRonconi/simplecapp_calculation_engine/tree/main/static/icone.png" alt="Logo" width="300" height="300">
   </a>
 

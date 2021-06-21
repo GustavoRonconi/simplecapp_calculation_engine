@@ -76,7 +76,7 @@ def financial_normal_operations():
             "operation_costs": 0.08,
             "currency_code": "BRL",
             "broker": "inter",
-            "irrf": 0.02
+            "irrf": 0.02,
         },
         {
             "date": "2020-10-11",
@@ -90,7 +90,7 @@ def financial_normal_operations():
             "operation_costs": 0.08,
             "currency_code": "BRL",
             "broker": "inter",
-            "irrf": 0.02
+            "irrf": 0.02,
         },
         {
             "date": "2020-10-12",
@@ -125,7 +125,7 @@ def financial_normal_operations():
             "ticker": "XPLG11",
             "ticker_type": "fiis",
             "units": 3,
-            "unitary_value": 128.80,
+            "unitary_value": 128.81,
             "amount": 386.43,
             "operation_costs": 0.08,
             "currency_code": "BRL",
@@ -190,7 +190,7 @@ def financial_normal_operations():
             "ticker": "KGBRUSSIA",
             "ticker_type": "stock",
             "units": 3,
-            "unitary_value": 128.80,
+            "unitary_value": 128.81,
             "amount": 386.43,
             "operation_costs": 0.08,
             "currency_code": "BRL",
@@ -200,3 +200,20 @@ def financial_normal_operations():
 
     return [FinantialOperation(**operation) for operation in financial_operations]
 
+
+@pytest.fixture
+def year_months_to_reference_year():
+    return [
+        "01/2020",
+        "02/2020",
+        "03/2020",
+        "04/2020",
+        "05/2020",
+        "06/2020",
+        "07/2020",
+        "08/2020",
+        "09/2020",
+        "10/2020",
+        "11/2020",
+        "12/2020",
+    ]

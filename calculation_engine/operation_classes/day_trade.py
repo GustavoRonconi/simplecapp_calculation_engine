@@ -1,5 +1,6 @@
 from calculation_engine import operation_classes
-from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
+from calculation_engine.operation_classes.operation_classes_commons import \
+    OperationClassesCommons
 from calculation_engine.utils import SimpleCappUtils
 
 

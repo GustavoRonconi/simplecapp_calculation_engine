@@ -1,9 +1,10 @@
-import pytest
 import json
 from datetime import date
+from unittest import mock
+
+import pytest
 
 from calculation_engine.handler import CalculationEngine
-from unittest import mock
 
 
 @pytest.fixture

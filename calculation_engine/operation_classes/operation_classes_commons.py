@@ -1,8 +1,9 @@
 from datetime import datetime
+
 from dateutil import relativedelta
 
-from calculation_engine.utils import SimpleCappUtils
 from calculation_engine.ticker_types import BDR, RealStateFunds, Stock
+from calculation_engine.utils import SimpleCappUtils
 
 
 class OperationClassesCommons:
@@ -19,6 +20,7 @@ class OperationClassesCommons:
     mapper_operation_type_factor = {"sale": -1, "purchase": 1}
 
     def append_inconsistency(self, message: str):
+        """To append inconsistency message in inconsistencies list"""
         if message not in self.inconsistencies:
             self.inconsistencies.append(message)
 
@@ -40,8 +42,9 @@ class OperationClassesCommons:
         summary_by_ticker: list,
         reference_year: int,
         year_months_to_reference_year: list,
-        previous_year_results: list,
+        previous_year_loss: list,
     ) -> dict:
+        """To compile operations by monthly"""
         summary_by_monthly = {}
         for year_month in year_months_to_reference_year:
             summary_by_monthly[year_month] = {
@@ -49,40 +52,41 @@ class OperationClassesCommons:
                 "ticker_type": self.ticker_type_instance.ticker_type,
                 "operation_class": self.operation_class,
             }
-            total_amount_sale, result, previous_loss, irrf = 0, 0, 0, 0
+            total_amount_sale, result, irrf, accumulated_loss = 0, 0, 0, 0
             for operation in summary_by_ticker:
-                previous_year_month = (
-                    datetime.strptime("01/" + year_month, "%d/%m/%Y") - relativedelta.relativedelta(months=3)
-                ).strftime("%m/%Y")
                 if operation["year_month"] == year_month:
                     total_amount_sale += operation["total_amount_sale"]
                     result += operation["result"]
                     irrf += operation["irrf"]
-
-            if year_month == f"01/{reference_year}":
-                previous_result = sum(
-                    (
-                        result.result
-                        for result in previous_year_results
-                        if result.operation_class == self.operation_class
-                        and result.ticker_type == self.ticker_type_instance.ticker_type
-                    )
-                )
-                previous_loss += previous_result if previous_result < 0 else 0
 
             ir_flag = (
                 self.ticker_type_instance.get_ir_flag(total_amount_sale)
                 if self.operation_class == "normal"
                 else True
             )
+            if year_month == f"01/{reference_year}":
+                accumulated_loss = sum(
+                    (
+                        loss.accumulated_loss
+                        for loss in previous_year_loss
+                        if loss.operation_class == self.operation_class
+                        and loss.ticker_type == self.ticker_type_instance.ticker_type
+                    )
+                )
+
+            elif ir_flag:
+                accumulated_loss += result
+            if accumulated_loss > 0:
+                accumulated_loss = 0
             ir_to_pay = (
-                self.ticker_type_instance.calcule_ir_to_pay(result, previous_loss, irrf) if ir_flag else 0
+                self.ticker_type_instance.calcule_ir_to_pay(result, accumulated_loss, irrf) if ir_flag else 0
             )
             summary_by_monthly[year_month].update(
                 {
                     "total_amount_sale": total_amount_sale,
                     "ir_flag": ir_flag,
                     "result": result,
+                    "accumulated_loss": accumulated_loss,
                     "irrf": irrf,
                     "ir_to_pay": ir_to_pay,
                     "final_result": result - ir_to_pay,
@@ -91,7 +95,7 @@ class OperationClassesCommons:
         return {"summary_by_monthly": SimpleCappUtils.unpack_dict_in_list_of_rows(1, summary_by_monthly)}
 
     def calcule_operations(
-        self, operations: list, reference_year: int, previous_year_results: list, **kwargs
+        self, operations: list, reference_year: int, previous_year_loss: list, **kwargs
     ) -> dict:
         year_months_to_reference_year = self.compile_year_months_reference_year(reference_year)
 
@@ -103,12 +107,12 @@ class OperationClassesCommons:
             output_operations_by_ticker["summary_by_ticker"],
             reference_year,
             year_months_to_reference_year,
-            previous_year_results,
+            previous_year_loss,
         )
 
         return {**output_operations_by_ticker, **output_operations_by_monthly}
 
-    def process(self, operations: list, reference_year: int, previous_year_results: list) -> dict:
+    def process(self, operations: list, reference_year: int, previous_year_loss: list) -> dict:
         if not operations:
             return {
                 "summary_by_ticker": [],
@@ -128,7 +132,7 @@ class OperationClassesCommons:
         for (ticker_type, operations) in agrouped_operations_by_ticker_type.items():
             self.ticker_type_instance = self.mapper_ticker_types[ticker_type]()
             output_by_ticker_type = self.ticker_type_instance.process(
-                operations, reference_year, previous_year_results, self.calcule_operations, average_price,
+                operations, reference_year, previous_year_loss, self.calcule_operations, average_price,
             )
             output_by_operation_class["summary_by_ticker"].extend(output_by_ticker_type["summary_by_ticker"])
             output_by_operation_class["custody_by_ticker_and_reference_year"].extend(

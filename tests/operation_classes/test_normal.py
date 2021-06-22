@@ -1,6 +1,7 @@
-import pytest
 from datetime import date
 from unittest import mock
+
+import pytest
 
 from calculation_engine.operation_classes import NormalCalculate
 from calculation_engine.ticker_types import RealStateFunds

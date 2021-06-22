@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class OperationTypeEnum(str, Enum):
     purchase = "purchase"
     sale = "sale"

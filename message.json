@@ -2,24 +2,24 @@
     "customer_name": "Henry Roetger Silva",
     "customer_cpf": "06716477926",
     "reference_year": 2020,
-    "previous_year_results": [
+    "previous_year_loss": [
         {
             "year_month": "12/2019",
             "ticker_type": "stock",
             "operation_class": "normal",
-            "result": -10
+            "accumulated_loss": -10
         },
         {
             "year_month": "12/2019",
             "ticker_type": "stock",
             "operation_class": "day_trade",
-            "result": -20
+            "accumulated_loss": -20
         },
         {
             "year_month": "12/2019",
             "ticker_type": "fiis",
             "operation_class": "normal",
-            "result": -30
+            "accumulated_loss": -30
         }
     ],
     "financial_operations": [

@@ -1,4 +1,5 @@
-from calculation_engine.ticker_types.ticker_type_commons import TickerTypesCommons
+from calculation_engine.ticker_types.ticker_type_commons import \
+    TickerTypesCommons
 
 
 class Stock(TickerTypesCommons):
@@ -7,4 +8,3 @@ class Stock(TickerTypesCommons):
     ticker_type = "stock"
     exception_sale_limit = 20000
     index_ir = 0.2
-

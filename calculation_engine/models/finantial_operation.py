@@ -1,10 +1,10 @@
 from datetime import date
-
 from typing import Optional
 
 from pydantic import BaseModel, root_validator
 
-from calculation_engine.constants import OperationClassEnum, OperationTypeEnum, TickerTypeEnum
+from calculation_engine.constants import (OperationClassEnum,
+                                          OperationTypeEnum, TickerTypeEnum)
 
 
 class FinantialOperation(BaseModel):

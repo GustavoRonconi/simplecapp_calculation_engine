@@ -1,8 +1,8 @@
 import calendar
 from datetime import date
 
-
-from calculation_engine.operation_classes.operation_classes_commons import OperationClassesCommons
+from calculation_engine.operation_classes.operation_classes_commons import \
+    OperationClassesCommons
 from calculation_engine.utils import SimpleCappUtils
 
 

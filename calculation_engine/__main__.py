@@ -1,6 +1,3 @@
-# TODO TRATAR LOGS POSIÇÕES NEGATIVAS
-
-
 from calculation_engine.handler import CalculationEngine
 
 with open("message.json") as message:

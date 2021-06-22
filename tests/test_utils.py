@@ -1,5 +1,6 @@
-import pytest
 from unittest import mock
+
+import pytest
 
 from calculation_engine.utils import SimpleCappUtils, UnpackError
 

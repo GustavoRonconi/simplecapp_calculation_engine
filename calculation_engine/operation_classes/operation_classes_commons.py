@@ -97,6 +97,7 @@ class OperationClassesCommons:
     def calcule_operations(
         self, operations: list, reference_year: int, previous_year_loss: list, **kwargs
     ) -> dict:
+        """To calcule/compile output of operations by monthly and tickers"""
         year_months_to_reference_year = self.compile_year_months_reference_year(reference_year)
 
         output_operations_by_ticker = self._calcule_operations_by_ticker(
@@ -118,6 +119,7 @@ class OperationClassesCommons:
                 "summary_by_ticker": [],
                 "custody_by_ticker_and_reference_year": [],
                 "summary_by_monthly": [],
+                "inconsistencies": []
             }
         average_price = {}
         if self.operation_class == "normal":

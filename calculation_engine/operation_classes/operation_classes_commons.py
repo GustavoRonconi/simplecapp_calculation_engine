@@ -114,6 +114,7 @@ class OperationClassesCommons:
         return {**output_operations_by_ticker, **output_operations_by_monthly}
 
     def process(self, operations: list, reference_year: int, previous_year_loss: list) -> dict:
+        """To determine and call the specific 'calculate' functions by operations attributes"""
         if not operations:
             return {
                 "summary_by_ticker": [],

@@ -51,6 +51,7 @@ class DayTradeCalculate(OperationClassesCommons):
     def _calcule_operations_by_ticker(
         self, operations: list, reference_year: int, year_months_to_reference_year: list, **kwargs
     ):
+        """To calcule day_trade operations by ticker"""
         tickers = SimpleCappUtils.get_unique_values(operations, "ticker")
         brokers = SimpleCappUtils.get_unique_values(operations, "broker")
 

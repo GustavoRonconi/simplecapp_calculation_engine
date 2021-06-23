@@ -119,7 +119,7 @@ class OperationClassesCommons:
                 "summary_by_ticker": [],
                 "custody_by_ticker_and_reference_year": [],
                 "summary_by_monthly": [],
-                "inconsistencies": []
+                "inconsistencies": [],
             }
         average_price = {}
         if self.operation_class == "normal":

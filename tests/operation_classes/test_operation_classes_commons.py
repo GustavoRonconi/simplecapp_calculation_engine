@@ -1926,7 +1926,7 @@ def test_process(
             "summary_by_ticker": [],
             "custody_by_ticker_and_reference_year": [],
             "summary_by_monthly": [],
-            "inconsistencies": []
+            "inconsistencies": [],
         }
         return
 
@@ -1934,6 +1934,5 @@ def test_process(
         "summary_by_ticker": [4, 1],
         "custody_by_ticker_and_reference_year": [5, 2],
         "summary_by_monthly": [6, 3],
-        "inconsistencies": []
+        "inconsistencies": [],
     }
-

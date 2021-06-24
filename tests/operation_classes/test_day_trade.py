@@ -1,6 +1,9 @@
+from unittest import mock
+
 import pytest
 
 from calculation_engine.operation_classes import DayTradeCalculate
+from calculation_engine.ticker_types import Stock
 
 
 @pytest.fixture
@@ -60,3 +63,237 @@ def test_calcule_day_trade_operation_monthly_params(
             in day_trade_calculate_instance.inconsistencies
         )
 
+
+@mock.patch("calculation_engine.utils.SimpleCappUtils.get_unique_values",)
+def test_calcule_operations_by_ticker(
+    mock_get_unique_values,
+    day_trade_calculate_instance,
+    financial_day_trade_operations,
+    year_months_to_reference_year,
+):
+    mock_get_unique_values.side_effect = [["KGBRUSSIA"], ["inter"]]
+    setattr(day_trade_calculate_instance, "ticker_type_instance", Stock())
+    day_trade_calculate_instance._calcule_day_trade_operation_monthly_params = mock.Mock(
+        side_effect=[
+            {
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            }
+            for i in range(12)
+        ]
+    )
+
+    expected_operations_by_ticker = {
+        "summary_by_ticker": [
+            {
+                "year_month": "01/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "02/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "03/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "04/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "05/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "06/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "07/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "08/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "09/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "10/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "11/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+            {
+                "year_month": "12/2020",
+                "broker": "inter",
+                "ticker_type": "stock",
+                "ticker": "KGBRUSSIA",
+                "operation_class": "day_trade",
+                "position": 0,
+                "average_purchase_price": 0,
+                "total_amount_purchase": 0,
+                "total_amount_sale": 0,
+                "total_units_purchase": 0,
+                "total_units_sale": 0,
+                "cgs": 0,
+                "irrf": 0,
+                "result": 0,
+            },
+        ],
+        "custody_by_ticker_and_reference_year": [],
+    }
+
+    assert (
+        day_trade_calculate_instance._calcule_operations_by_ticker(
+            financial_day_trade_operations, 2020, year_months_to_reference_year
+        )
+        == expected_operations_by_ticker
+    )
+
+    assert mock_get_unique_values.call_count == 2
+    day_trade_calculate_instance._calcule_day_trade_operation_monthly_params.call_count == 12

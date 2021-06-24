@@ -21,10 +21,62 @@ def operations(finantial_normal_operation, finantial_day_trade_operation):
 
 
 def test_append_inconsistency(operation_classes_commons_instance):
+    operation_classes_commons_instance.inconsistencies = []
     messages_to_append = ["message_1", "message_2", "message_1"]
     for message in messages_to_append:
         operation_classes_commons_instance.append_inconsistency(message)
     assert operation_classes_commons_instance.inconsistencies == ["message_1", "message_2"]
+
+
+@pytest.mark.parametrize("operation_class, operations", [("day_trade", []), ("normal", [1, 2])])
+@mock.patch("calculation_engine.operation_classes.operation_classes_commons.RealStateFunds.process")
+@mock.patch("calculation_engine.operation_classes.operation_classes_commons.Stock.process")
+def test_process(
+    mock_process_real_state_funds,
+    mock_process_stocks,
+    operation_class,
+    operations,
+    operation_classes_commons_instance,
+):
+    reference_year = 2020
+    previous_year_loss = []
+    operation_classes_commons_instance.inconsistencies = []
+
+    operation_classes_commons_instance.operation_class = mock.PropertyMock(return_value=operation_class)
+    operation_classes_commons_instance._calcule_average_purchase_price_for_each_sale = mock.Mock(
+        return_value={"average": 1}
+    )
+    operation_classes_commons_instance.calcule_operations = mock.Mock(return_vales="one_function")
+    operation_classes_commons_instance.agroup_operations_by_ticker_type = mock.Mock(
+        return_value={"fiis": [1, 2], "stock": [2, 3]}
+    )
+    mock_process_real_state_funds.return_value = {
+        "summary_by_ticker": [1],
+        "custody_by_ticker_and_reference_year": [2],
+        "summary_by_monthly": [3],
+    }
+    mock_process_stocks.return_value = {
+        "summary_by_ticker": [4],
+        "custody_by_ticker_and_reference_year": [5],
+        "summary_by_monthly": [6],
+    }
+
+    result = operation_classes_commons_instance.process(operations, reference_year, previous_year_loss)
+    if not operations:
+        assert result == {
+            "summary_by_ticker": [],
+            "custody_by_ticker_and_reference_year": [],
+            "summary_by_monthly": [],
+            "inconsistencies": [],
+        }
+        return
+
+    assert result == {
+        "summary_by_ticker": [4, 1],
+        "custody_by_ticker_and_reference_year": [5, 2],
+        "summary_by_monthly": [6, 3],
+        "inconsistencies": [],
+    }
 
 
 @mock.patch(
@@ -1886,53 +1938,3 @@ def test_calcule_operations(operation_classes_commons_instance, year_months_to_r
     operation_classes_commons_instance._calcule_operations_by_monthly.assert_called_once_with(
         1, 2020, year_months_to_reference_year, previous_year_loss,
     )
-
-
-@pytest.mark.parametrize("operation_class, operations", [("day_trade", []), ("normal", [1, 2])])
-@mock.patch("calculation_engine.operation_classes.operation_classes_commons.RealStateFunds.process")
-@mock.patch("calculation_engine.operation_classes.operation_classes_commons.Stock.process")
-def test_process(
-    mock_process_real_state_funds,
-    mock_process_stocks,
-    operation_class,
-    operations,
-    operation_classes_commons_instance,
-):
-    reference_year = 2020
-    previous_year_loss = []
-
-    operation_classes_commons_instance.operation_class = mock.PropertyMock(return_value=operation_class)
-    operation_classes_commons_instance._calcule_average_purchase_price_for_each_sale = mock.Mock(
-        return_value={"average": 1}
-    )
-    operation_classes_commons_instance.calcule_operations = mock.Mock(return_vales="one_function")
-    operation_classes_commons_instance.agroup_operations_by_ticker_type = mock.Mock(
-        return_value={"fiis": [1, 2], "stock": [2, 3]}
-    )
-    mock_process_real_state_funds.return_value = {
-        "summary_by_ticker": [1],
-        "custody_by_ticker_and_reference_year": [2],
-        "summary_by_monthly": [3],
-    }
-    mock_process_stocks.return_value = {
-        "summary_by_ticker": [4],
-        "custody_by_ticker_and_reference_year": [5],
-        "summary_by_monthly": [6],
-    }
-
-    result = operation_classes_commons_instance.process(operations, reference_year, previous_year_loss)
-    if not operations:
-        assert result == {
-            "summary_by_ticker": [],
-            "custody_by_ticker_and_reference_year": [],
-            "summary_by_monthly": [],
-            "inconsistencies": [],
-        }
-        return
-
-    assert result == {
-        "summary_by_ticker": [4, 1],
-        "custody_by_ticker_and_reference_year": [5, 2],
-        "summary_by_monthly": [6, 3],
-        "inconsistencies": [],
-    }

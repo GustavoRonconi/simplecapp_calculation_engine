@@ -59,4 +59,3 @@ class CalculationEngine:
             summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
             inconsistencies.extend(output_by_operation_class["inconsistencies"])
 
-        print(1)

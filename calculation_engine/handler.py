@@ -2,8 +2,7 @@ import json
 
 from calculation_engine.exceptions import InvalidAnnualSummary
 from calculation_engine.models.annual_summary import AnnualSummary
-from calculation_engine.operation_classes import (DayTradeCalculate,
-                                                  NormalCalculate)
+from calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
 from calculation_engine.utils import SimpleCappUtils
 
 
@@ -58,4 +57,3 @@ class CalculationEngine:
             )
             summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
             inconsistencies.extend(output_by_operation_class["inconsistencies"])
-

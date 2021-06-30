@@ -1,4 +1,3 @@
-import json
 from datetime import date
 from unittest import mock
 
@@ -12,12 +11,12 @@ from calculation_engine.exceptions import InvalidAnnualSummary
 
 @pytest.fixture
 def calculation_engine_instance(annual_summary_message):
-    return CalculationEngine(json.dumps(annual_summary_message))
+    return CalculationEngine(annual_summary_message)
 
 
 def test_invalid_calculation_engine_instance():
     with pytest.raises(InvalidAnnualSummary):
-        CalculationEngine(json.dumps({"mensagem": "invalida"}))
+        CalculationEngine({"mensagem": "invalida"})
 
 
 @mock.patch("calculation_engine.handler.SimpleCappUtils.get_list_with_filters",)

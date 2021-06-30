@@ -1,5 +1,3 @@
-import json
-
 from calculation_engine.exceptions import InvalidAnnualSummary
 from calculation_engine.models.annual_summary import AnnualSummary
 from calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
@@ -27,10 +25,9 @@ class CalculationEngine:
 
         return agrouped_operations_by_operation_class
 
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: dict) -> None:
         try:
-            message_dict = json.loads(message)
-            self.annual_summary = self.model_class(**message_dict)
+            self.annual_summary = self.model_class(**message)
         except:
             raise InvalidAnnualSummary()
 
@@ -57,3 +54,4 @@ class CalculationEngine:
             )
             summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
             inconsistencies.extend(output_by_operation_class["inconsistencies"])
+        print(1)

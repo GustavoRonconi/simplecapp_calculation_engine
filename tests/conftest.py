@@ -54,8 +54,7 @@ def finantial_day_trade_operation(finantial_day_trade_operation_message):
 @pytest.fixture
 def annual_summary_message(finantial_normal_operation_message, finantial_day_trade_operation_message):
     return {
-        "customer_name": "Henry Roetger Silva",
-        "customer_cpf": "06716477927",
+        "profile_id": 1,
         "reference_year": 2020,
         "financial_operations": [finantial_normal_operation_message, finantial_day_trade_operation_message,],
     }

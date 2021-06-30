@@ -14,8 +14,7 @@ class PreviewYearLoss(BaseModel):
 
 
 class AnnualSummary(BaseModel):
-    customer_name: str
-    customer_cpf: str
+    profile_id: int
     reference_year: int
     previous_year_loss: Optional[List[PreviewYearLoss]] = []
     financial_operations: List[FinantialOperation]

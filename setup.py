@@ -9,7 +9,7 @@ setup(
     url="https://github.com/GustavoRonconi/simplecapp_simplecapp_calculation_engine",
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",
-    version="0.1.2",
+    version="0.1.3",
     install_requires=["pydantic==1.8.2", "python-dateutil==2.8.1"],
     license="MIT",
     long_description=long_description,

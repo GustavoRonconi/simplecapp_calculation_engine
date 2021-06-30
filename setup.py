@@ -10,6 +10,7 @@ setup(
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",
     version="0.1.2",
+    install_requires=["pydantic==1.8.2", "python-dateutil==2.8.1"],
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",

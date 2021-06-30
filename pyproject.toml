@@ -1,7 +1,5 @@
 [build-system]
 requires = [
-    "pydantic==1.8.2",
-    "python-dateutil==2.8.1",
     "setuptools", 
     "wheel"
 ]

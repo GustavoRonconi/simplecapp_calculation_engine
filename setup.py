@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 
 setup(
-    name="SimpleCapp Calculation Engine",
+    name="simplecapp_calculation_engine",
     url="https://github.com/GustavoRonconi/simplecapp_simplecapp_calculation_engine",
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",

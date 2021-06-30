@@ -18,7 +18,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],  # TODO Colocar uma licença fechada aqui
-    package_dir={"": "calculation_engine"},
-    packages=find_packages(where="calculation_engine"),
+    packages=['calculation_engine'],
     python_requires=">=3.8",
 )

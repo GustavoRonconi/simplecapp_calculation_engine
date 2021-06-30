@@ -9,7 +9,7 @@ setup(
     url="https://github.com/GustavoRonconi/simplecapp_simplecapp_calculation_engine",
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",
-    version="0.1.0",
+    version="0.1.1",
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",

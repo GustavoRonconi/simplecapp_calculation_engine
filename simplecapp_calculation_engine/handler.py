@@ -14,6 +14,12 @@ class CalculationEngine:
         "normal": NormalCalculate,
     }
 
+    def __init__(self, message: dict) -> None:
+        try:
+            self.annual_summary = self.model_class(**message)
+        except:
+            raise InvalidAnnualSummary()
+
     def _agroup_operations_by_operation_class(self, operations: list) -> dict:
         """To agroup financial operations by operation class"""
         agrouped_operations_by_operation_class = {
@@ -24,12 +30,6 @@ class CalculationEngine:
         }
 
         return agrouped_operations_by_operation_class
-
-    def __init__(self, message: dict) -> None:
-        try:
-            self.annual_summary = self.model_class(**message)
-        except:
-            raise InvalidAnnualSummary()
 
     def process(self) -> None:
         agrouped_operations_by_operation_class = self._agroup_operations_by_operation_class(

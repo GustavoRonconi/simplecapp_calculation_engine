@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 from pydantic.error_wrappers import ValidationError
 
-from calculation_engine.models.finantial_operation import FinantialOperation
+from simplecapp_calculation_engine.models.finantial_operation import FinantialOperation
 
 
 def test_finantial_operation_invalid_values(finantial_normal_operation_message):

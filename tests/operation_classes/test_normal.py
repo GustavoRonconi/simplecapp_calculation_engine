@@ -3,8 +3,8 @@ from unittest import mock
 
 import pytest
 
-from calculation_engine.operation_classes import NormalCalculate
-from calculation_engine.ticker_types import RealStateFunds
+from simplecapp_calculation_engine.operation_classes import NormalCalculate
+from simplecapp_calculation_engine.ticker_types import RealStateFunds
 
 
 @pytest.fixture
@@ -509,7 +509,7 @@ def test_calcule_average_purchase_price_certain_day_with_purchases_and_sales(
 
 
 @mock.patch(
-    "calculation_engine.operation_classes.NormalCalculate._calcule_average_purchase_price_certain_day"
+    "simplecapp_calculation_engine.operation_classes.NormalCalculate._calcule_average_purchase_price_certain_day"
 )
 def test_calcule_average_purchase_price_for_each_sale(
     mock_average_purchase_price_certain_day,
@@ -527,7 +527,7 @@ def test_calcule_average_purchase_price_for_each_sale(
     assert mock_average_purchase_price_certain_day.call_count == 10
 
 
-@mock.patch("calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
+@mock.patch("simplecapp_calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
 def test_calcule_normal_operation_monthly_params_negative_position(
     mock_last_position_average_price_for_month, normal_calculate_instance, financial_normal_operations
 ):
@@ -557,7 +557,7 @@ def test_calcule_normal_operation_monthly_params_negative_position(
     mock_last_position_average_price_for_month.assert_called_with(average_price_by_ticker, year_month, ticker)
 
 
-@mock.patch("calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
+@mock.patch("simplecapp_calculation_engine.operation_classes.NormalCalculate._get_last_position_average_price_for_month")
 def test_calcule_normal_operation_monthly_params(
     mock_last_position_average_price_for_month, normal_calculate_instance, financial_normal_operations
 ):
@@ -590,9 +590,9 @@ def test_calcule_normal_operation_monthly_params(
     mock_last_position_average_price_for_month.assert_called_with(average_price_by_ticker, year_month, ticker)
 
 
-@mock.patch("calculation_engine.operation_classes.normal.SimpleCappUtils.get_unique_values")
-@mock.patch("calculation_engine.operation_classes.normal.SimpleCappUtils.unpack_dict_in_list_of_rows")
-@mock.patch("calculation_engine.operation_classes.NormalCalculate._calcule_normal_operation_monthly_params")
+@mock.patch("simplecapp_calculation_engine.operation_classes.normal.SimpleCappUtils.get_unique_values")
+@mock.patch("simplecapp_calculation_engine.operation_classes.normal.SimpleCappUtils.unpack_dict_in_list_of_rows")
+@mock.patch("simplecapp_calculation_engine.operation_classes.NormalCalculate._calcule_normal_operation_monthly_params")
 def test_calcule_operations_by_ticker(
     mock_calcule_normal_operation_monthly_params,
     mock_unpack_dict_in_list_of_rows,

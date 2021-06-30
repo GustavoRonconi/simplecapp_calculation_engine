@@ -2,8 +2,8 @@ from unittest import mock
 
 import pytest
 
-from calculation_engine.operation_classes import DayTradeCalculate
-from calculation_engine.ticker_types import Stock
+from simplecapp_calculation_engine.operation_classes import DayTradeCalculate
+from simplecapp_calculation_engine.ticker_types import Stock
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ def test_calcule_day_trade_operation_monthly_params(
         )
 
 
-@mock.patch("calculation_engine.utils.SimpleCappUtils.get_unique_values",)
+@mock.patch("simplecapp_calculation_engine.utils.SimpleCappUtils.get_unique_values",)
 def test_calcule_operations_by_ticker(
     mock_get_unique_values,
     day_trade_calculate_instance,

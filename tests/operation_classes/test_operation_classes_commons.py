@@ -4,9 +4,9 @@ from unittest import mock
 import pytest
 from pydantic.types import NoneBytes
 
-from calculation_engine.models.annual_summary import PreviewYearLoss
-from calculation_engine.operation_classes import OperationClassesCommons
-from calculation_engine.ticker_types import RealStateFunds, Stock
+from simplecapp_calculation_engine.models.annual_summary import PreviewYearLoss
+from simplecapp_calculation_engine.operation_classes import OperationClassesCommons
+from simplecapp_calculation_engine.ticker_types import RealStateFunds, Stock
 
 
 @pytest.fixture
@@ -29,8 +29,8 @@ def test_append_inconsistency(operation_classes_commons_instance):
 
 
 @pytest.mark.parametrize("operation_class, operations", [("day_trade", []), ("normal", [1, 2])])
-@mock.patch("calculation_engine.operation_classes.operation_classes_commons.RealStateFunds.process")
-@mock.patch("calculation_engine.operation_classes.operation_classes_commons.Stock.process")
+@mock.patch("simplecapp_calculation_engine.operation_classes.operation_classes_commons.RealStateFunds.process")
+@mock.patch("simplecapp_calculation_engine.operation_classes.operation_classes_commons.Stock.process")
 def test_process(
     mock_process_real_state_funds,
     mock_process_stocks,
@@ -80,7 +80,7 @@ def test_process(
 
 
 @mock.patch(
-    "calculation_engine.operation_classes.operation_classes_commons.SimpleCappUtils.get_list_with_filters",
+    "simplecapp_calculation_engine.operation_classes.operation_classes_commons.SimpleCappUtils.get_list_with_filters",
 )
 def test_agroup_operations_by_ticker_type(
     mock_get_list_with_filters, operation_classes_commons_instance, operations
@@ -1884,7 +1884,7 @@ def test_compile_year_months_reference_year(
     ],
 )
 @mock.patch(
-    "calculation_engine.operation_classes.operation_classes_commons.SimpleCappUtils.unpack_dict_in_list_of_rows"
+    "simplecapp_calculation_engine.operation_classes.operation_classes_commons.SimpleCappUtils.unpack_dict_in_list_of_rows"
 )
 def test_calcule_operations_by_monthly(
     mock_unpack_dict_in_list_of_rows,

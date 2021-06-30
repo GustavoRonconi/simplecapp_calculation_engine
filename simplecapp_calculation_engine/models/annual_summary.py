@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from calculation_engine.constants import OperationClassEnum, TickerTypeEnum
-from calculation_engine.models.finantial_operation import FinantialOperation
+from simplecapp_calculation_engine.constants import OperationClassEnum, TickerTypeEnum
+from simplecapp_calculation_engine.models.finantial_operation import FinantialOperation
 
 
 class PreviewYearLoss(BaseModel):

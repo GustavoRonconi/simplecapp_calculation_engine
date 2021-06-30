@@ -1,4 +1,4 @@
-from calculation_engine.ticker_types.ticker_type_commons import \
+from simplecapp_calculation_engine.ticker_types.ticker_type_commons import \
     TickerTypesCommons
 
 

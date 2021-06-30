@@ -3,24 +3,24 @@ from unittest import mock
 
 import pytest
 
-from calculation_engine.handler import CalculationEngine
+from simplecapp_calculation_engine.handler import CalculationEngine
 
-# from calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
-from calculation_engine.exceptions import InvalidAnnualSummary
+# from simplecapp_calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
+from simplecapp_calculation_engine.exceptions import InvalidAnnualSummary
 
 
 @pytest.fixture
-def calculation_engine_instance(annual_summary_message):
+def simplecapp_calculation_engine_instance(annual_summary_message):
     return CalculationEngine(annual_summary_message)
 
 
-def test_invalid_calculation_engine_instance():
+def test_invalid_simplecapp_calculation_engine_instance():
     with pytest.raises(InvalidAnnualSummary):
         CalculationEngine({"mensagem": "invalida"})
 
 
-@mock.patch("calculation_engine.handler.SimpleCappUtils.get_list_with_filters",)
-def test_agroup_operations_by_operation_class(mock_get_list_with_filters, calculation_engine_instance):
+@mock.patch("simplecapp_calculation_engine.handler.SimpleCappUtils.get_list_with_filters",)
+def test_agroup_operations_by_operation_class(mock_get_list_with_filters, simplecapp_calculation_engine_instance):
     mock_get_list_with_filters.side_effect = [
         [
             {
@@ -53,7 +53,7 @@ def test_agroup_operations_by_operation_class(mock_get_list_with_filters, calcul
             }
         ],
     ]
-    operations = calculation_engine_instance.annual_summary.financial_operations
+    operations = simplecapp_calculation_engine_instance.annual_summary.financial_operations
 
     expected_agrouped_operations_by_operation_class = {
         "day_trade": [
@@ -89,7 +89,7 @@ def test_agroup_operations_by_operation_class(mock_get_list_with_filters, calcul
     }
 
     assert (
-        calculation_engine_instance._agroup_operations_by_operation_class(operations)
+        simplecapp_calculation_engine_instance._agroup_operations_by_operation_class(operations)
         == expected_agrouped_operations_by_operation_class
     )
 
@@ -101,10 +101,10 @@ def test_agroup_operations_by_operation_class(mock_get_list_with_filters, calcul
     )
 
 
-@mock.patch("calculation_engine.operation_classes.DayTradeCalculate.process",)
-@mock.patch("calculation_engine.operation_classes.NormalCalculate.process",)
-def test_process(mock_normal_process, mock_day_trade_process, calculation_engine_instance):
-    calculation_engine_instance._agroup_operations_by_operation_class = mock.Mock(
+@mock.patch("simplecapp_calculation_engine.operation_classes.DayTradeCalculate.process",)
+@mock.patch("simplecapp_calculation_engine.operation_classes.NormalCalculate.process",)
+def test_process(mock_normal_process, mock_day_trade_process, simplecapp_calculation_engine_instance):
+    simplecapp_calculation_engine_instance._agroup_operations_by_operation_class = mock.Mock(
         return_value={"normal": [1, 2], "day_trade": [3, 4]}
     )
     mock_normal_process.return_value = {
@@ -120,10 +120,10 @@ def test_process(mock_normal_process, mock_day_trade_process, calculation_engine
         "inconsistencies": [18, 19],
     }
 
-    assert calculation_engine_instance.process() == None
+    assert simplecapp_calculation_engine_instance.process() == None
 
-    calculation_engine_instance._agroup_operations_by_operation_class.assert_called_once_with(
-        calculation_engine_instance.annual_summary.financial_operations
+    simplecapp_calculation_engine_instance._agroup_operations_by_operation_class.assert_called_once_with(
+        simplecapp_calculation_engine_instance.annual_summary.financial_operations
     )
 
     mock_normal_process.assert_called_once_with([1, 2], 2020, [])

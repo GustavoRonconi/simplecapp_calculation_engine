@@ -1,7 +1,7 @@
-from calculation_engine.exceptions import InvalidAnnualSummary
-from calculation_engine.models.annual_summary import AnnualSummary
-from calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
-from calculation_engine.utils import SimpleCappUtils
+from simplecapp_calculation_engine.exceptions import InvalidAnnualSummary
+from simplecapp_calculation_engine.models.annual_summary import AnnualSummary
+from simplecapp_calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
+from simplecapp_calculation_engine.utils import SimpleCappUtils
 
 
 class CalculationEngine:

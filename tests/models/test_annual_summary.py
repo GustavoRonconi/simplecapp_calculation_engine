@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pydantic.error_wrappers import ValidationError
 
-from calculation_engine.models.annual_summary import AnnualSummary
+from simplecapp_calculation_engine.models.annual_summary import AnnualSummary
 
 
 @pytest.mark.parametrize(

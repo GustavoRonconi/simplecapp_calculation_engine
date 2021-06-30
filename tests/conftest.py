@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from calculation_engine.models.finantial_operation import FinantialOperation
+from simplecapp_calculation_engine.models.finantial_operation import FinantialOperation
 
 
 @pytest.fixture

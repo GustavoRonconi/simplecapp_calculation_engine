@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, root_validator
 
-from calculation_engine.constants import (OperationClassEnum,
+from simplecapp_calculation_engine.constants import (OperationClassEnum,
                                           OperationTypeEnum, TickerTypeEnum)
 
 

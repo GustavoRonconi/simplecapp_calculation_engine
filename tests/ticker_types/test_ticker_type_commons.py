@@ -1,6 +1,6 @@
 import pytest
 
-from calculation_engine.ticker_types import (BDR, RealStateFunds, Stock,
+from simplecapp_calculation_engine.ticker_types import (BDR, RealStateFunds, Stock,
                                              TickerTypesCommons)
 
 

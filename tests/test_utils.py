@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from calculation_engine.utils import SimpleCappUtils, UnpackError
+from simplecapp_calculation_engine.utils import SimpleCappUtils, UnpackError
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def test_get_list_with_filters_empty():
     assert SimpleCappUtils.get_list_with_filters(filter_dict, []) == []
 
 
-@mock.patch("calculation_engine.utils.SimpleCappUtils.get_list_with_filters",)
+@mock.patch("simplecapp_calculation_engine.utils.SimpleCappUtils.get_list_with_filters",)
 def test_index_list_by_list_of_keys(mock_get_list_with_filters, list_dict_bands):
     mock_get_list_with_filters.side_effect = [
         [list_dict_bands[0], list_dict_bands[2]],

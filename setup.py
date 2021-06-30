@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="SimpleCapp Calculation Engine",
-    url="https://github.com/GustavoRonconi/simplecapp_calculation_engine",
+    url="https://github.com/GustavoRonconi/simplecapp_simplecapp_calculation_engine",
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",
     version="0.1.0",
@@ -18,6 +18,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],  # TODO Colocar uma licença fechada aqui
-    packages=['calculation_engine'],
+    packages=['simplecapp_calculation_engine'],
     python_requires=">=3.8",
 )

@@ -2,8 +2,8 @@ from datetime import datetime
 
 from dateutil import relativedelta
 
-from calculation_engine.ticker_types import BDR, RealStateFunds, Stock
-from calculation_engine.utils import SimpleCappUtils
+from simplecapp_calculation_engine.ticker_types import BDR, RealStateFunds, Stock
+from simplecapp_calculation_engine.utils import SimpleCappUtils
 
 
 class OperationClassesCommons:

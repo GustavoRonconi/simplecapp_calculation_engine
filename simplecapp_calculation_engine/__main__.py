@@ -1,4 +1,4 @@
-from calculation_engine.handler import CalculationEngine
+from simplecapp_calculation_engine.handler import CalculationEngine
 
 with open("message.json") as message:
     instance_of_calculation = CalculationEngine(message.read())

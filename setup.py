@@ -9,7 +9,7 @@ setup(
     url="https://github.com/GustavoRonconi/simplecapp_simplecapp_calculation_engine",
     author="Gustavo A. Ronconi",
     author_email="gustavo.ronconi@simplecapp.com.br",
-    version="0.1.1",
+    version="0.1.2",
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,6 +18,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],  # TODO Colocar uma licença fechada aqui
-    packages=['simplecapp_calculation_engine'],
+    packages=find_packages(),
     python_requires=">=3.8",
 )

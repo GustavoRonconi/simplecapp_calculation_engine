@@ -31,26 +31,30 @@ class CalculationEngine:
 
         return agrouped_operations_by_operation_class
 
-    def process(self) -> None:
+    def process(self) -> dict:
+        """Process the entire operations and return IRPF output"""
         agrouped_operations_by_operation_class = self._agroup_operations_by_operation_class(
             self.annual_summary.financial_operations
         )
         reference_year = self.annual_summary.reference_year
         previous_year_loss = self.annual_summary.previous_year_loss
 
-        summary_by_ticker, custody_by_ticker_and_reference_year, summary_by_monthly, inconsistencies = (
-            [],
-            [],
-            [],
-            [],
-        )
+        output_irpf = {
+            "summary_by_ticker": [],
+            "custody_by_ticker_and_reference_year": [],
+            "summary_by_monthly": [],
+            "inconsistencies": [],
+        }
+
         for (operation_class, operations,) in agrouped_operations_by_operation_class.items():
             output_by_operation_class = self.mapper_operation_classes[operation_class]().process(
                 operations, reference_year, previous_year_loss
             )
-            summary_by_ticker.extend(output_by_operation_class["summary_by_ticker"])
-            custody_by_ticker_and_reference_year.extend(
+            output_irpf["summary_by_ticker"].extend(output_by_operation_class["summary_by_ticker"])
+            output_irpf["custody_by_ticker_and_reference_year"].extend(
                 output_by_operation_class["custody_by_ticker_and_reference_year"]
             )
-            summary_by_monthly.extend(output_by_operation_class["summary_by_monthly"])
-            inconsistencies.extend(output_by_operation_class["inconsistencies"])
+            output_irpf["summary_by_monthly"].extend(output_by_operation_class["summary_by_monthly"])
+            output_irpf["inconsistencies"].extend(output_by_operation_class["inconsistencies"])
+
+        return output_irpf

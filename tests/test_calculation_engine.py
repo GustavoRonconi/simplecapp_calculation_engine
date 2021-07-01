@@ -3,9 +3,7 @@ from unittest import mock
 
 import pytest
 
-from simplecapp_calculation_engine.handler import CalculationEngine
-
-# from simplecapp_calculation_engine.operation_classes import DayTradeCalculate, NormalCalculate
+from simplecapp_calculation_engine import CalculationEngine
 from simplecapp_calculation_engine.exceptions import InvalidAnnualSummary
 
 
@@ -19,8 +17,10 @@ def test_invalid_simplecapp_calculation_engine_instance():
         CalculationEngine({"mensagem": "invalida"})
 
 
-@mock.patch("simplecapp_calculation_engine.handler.SimpleCappUtils.get_list_with_filters",)
-def test_agroup_operations_by_operation_class(mock_get_list_with_filters, simplecapp_calculation_engine_instance):
+@mock.patch("simplecapp_calculation_engine.calculation_engine.SimpleCappUtils.get_list_with_filters",)
+def test_agroup_operations_by_operation_class(
+    mock_get_list_with_filters, simplecapp_calculation_engine_instance
+):
     mock_get_list_with_filters.side_effect = [
         [
             {
@@ -120,7 +120,12 @@ def test_process(mock_normal_process, mock_day_trade_process, simplecapp_calcula
         "inconsistencies": [18, 19],
     }
 
-    assert simplecapp_calculation_engine_instance.process() == None
+    assert simplecapp_calculation_engine_instance.process() == {
+        "summary_by_ticker": [5, 6, 12, 13],
+        "custody_by_ticker_and_reference_year": [7, 8, 14, 15],
+        "summary_by_monthly": [8, 9, 16, 17],
+        "inconsistencies": [10, 11, 18, 19],
+    }
 
     simplecapp_calculation_engine_instance._agroup_operations_by_operation_class.assert_called_once_with(
         simplecapp_calculation_engine_instance.annual_summary.financial_operations
